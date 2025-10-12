@@ -1,15 +1,18 @@
-import express from 'express';
-import cors from 'cors';
-import usersRouter from './routes/users';
-import booksRouter from './routes/books';
-import loansRouter from './routes/loans';
-import authRouter from './routes/auth';
-import reservationsRouter from './routes/reservations';
-import copiesRouter from './routes/copies';
+const express = require('express');
+const cors = require('cors');
+const usersRouter = require('./routes/users').default || require('./routes/users');
+const booksRouter = require('./routes/books').default || require('./routes/books');
+const loansRouter = require('./routes/loans').default || require('./routes/loans');
+const authRouter = require('./routes/auth').default || require('./routes/auth');
+const reservationsRouter = require('./routes/reservations').default || require('./routes/reservations');
+const copiesRouter = require('./routes/copies').default || require('./routes/copies');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger').swaggerSpec;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/books', booksRouter);

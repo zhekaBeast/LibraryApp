@@ -1,10 +1,20 @@
-import { Router } from 'express';
-import prisma from '../prisma';
+const { Router } = require('express');
+const prisma = require('../prisma').default || require('../prisma');
+const { requireAuth } = require('../middleware/auth');
 
 const router = Router();
 
 router.get('/', async (_req, res) => {
   const loans = await prisma.loan.findMany({ include: { user: true, copy: { include: { book: true } } } });
+  res.json(loans);
+});
+
+router.get('/my', requireAuth, async (req, res) => {
+  const auth = (req as any).auth as { userId: number };
+  const loans = await prisma.loan.findMany({ 
+    where: { userId: auth.userId },
+    include: { copy: { include: { book: true } } }
+  });
   res.json(loans);
 });
 
@@ -22,5 +32,5 @@ router.post('/return', async (req, res) => {
   res.json(loan);
 });
 
-export default router;
+module.exports = router;
 

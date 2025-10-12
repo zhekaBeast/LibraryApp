@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import prisma from '../prisma';
-import { requireAuth } from '../middleware/auth';
+const { Router } = require('express');
+const prisma = require('../prisma').default || require('../prisma');
+const { requireAuth } = require('../middleware/auth');
 
 const router = Router();
 
@@ -22,5 +22,5 @@ router.post('/', async (req, res) => {
   res.status(201).json(r);
 });
 
-export default router;
+module.exports = router;
 

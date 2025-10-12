@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import prisma from '../prisma';
+const { Router } = require('express');
+const prisma = require('../prisma').default || require('../prisma');
 
 const router = Router();
 
@@ -14,5 +14,5 @@ router.post('/', async (req, res) => {
   res.status(201).json(user);
 });
 
-export default router;
+module.exports = router;
 

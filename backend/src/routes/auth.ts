@@ -1,9 +1,47 @@
-import { Router } from 'express';
-import bcrypt from 'bcryptjs';
-import prisma from '../prisma';
-import { signToken } from '../middleware/auth';
+const { Router } = require('express');
+const bcrypt = require('bcryptjs');
+const prisma = require('../prisma').default || require('../prisma');
+const { signToken } = require('../middleware/auth');
 
 const router = Router();
+
+/**
+ * @openapi
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, name, password]
+ *             properties:
+ *               email: { type: string }
+ *               name: { type: string }
+ *               password: { type: string }
+ *     responses:
+ *       201: { description: Created }
+ */
+/**
+ * @openapi
+ * /api/auth/login:
+ *   post:
+ *     summary: Login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email: { type: string }
+ *               password: { type: string }
+ *     responses:
+ *       200: { description: OK }
+ */
 
 router.post('/register', async (req, res) => {
   const { email, name, password } = req.body;
@@ -25,5 +63,5 @@ router.post('/login', async (req, res) => {
   res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
 });
 
-export default router;
+module.exports = router;
 
