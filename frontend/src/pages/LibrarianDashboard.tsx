@@ -162,7 +162,7 @@ export default function LibrarianDashboardPage() {
 					borderRadius: '12px', 
 					padding: '24px',
 					boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-					borderLeft: '4px solid',
+					borderLeft: '4px solid',	
                     color: '#ef4444'
 				}}>
 					<h3 style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', margin: '0 0 8px 0' }}>
@@ -263,7 +263,7 @@ export default function LibrarianDashboardPage() {
 									</div>
 								</div>
 							))}
-						</div>
+						</div>	
 					)}
 				</div>
 

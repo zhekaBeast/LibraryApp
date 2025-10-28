@@ -148,9 +148,6 @@ export default function LibrarianBooksPage() {
 					</h2>
 					<form onSubmit={handleAddBook} style={{ display: 'grid', gap: '16px', maxWidth: '500px' }}>
 						<div>
-							<label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-								Название *
-							</label>
 							<input
 								value={newBook.title}
 								onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
@@ -163,12 +160,10 @@ export default function LibrarianBooksPage() {
 									fontSize: '16px',
 									boxSizing: 'border-box'
 								}}
+								placeholder='Название'
 							/>
 						</div>
 						<div>
-							<label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-								Автор *
-							</label>
 							<input
 								value={newBook.author}
 								onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
@@ -181,12 +176,10 @@ export default function LibrarianBooksPage() {
 									fontSize: '16px',
 									boxSizing: 'border-box'
 								}}
+								placeholder='Автор'
 							/>
 						</div>
 						<div>
-							<label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-								ISBN
-							</label>
 							<input
 								value={newBook.isbn}
 								onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
@@ -198,12 +191,10 @@ export default function LibrarianBooksPage() {
 									fontSize: '16px',
 									boxSizing: 'border-box'
 								}}
+								placeholder='ISBN'
 							/>
 						</div>
 						<div>
-							<label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-								Жанр
-							</label>
 							<input
 								value={newBook.genre}
 								onChange={(e) => setNewBook({ ...newBook, genre: e.target.value })}
@@ -215,6 +206,7 @@ export default function LibrarianBooksPage() {
 									fontSize: '16px',
 									boxSizing: 'border-box'
 								}}
+								placeholder='Жанр'
 							/>
 						</div>
 						<div style={{ display: 'flex', gap: '12px' }}>

@@ -26,15 +26,28 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
   min-height: 100vh;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: #000000;
 }
-
+p{
+  color: #000000;
+}
+h2 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: #000000;
+}
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #000000; /* или любой другой цвет */
+}
 button {
   border-radius: 8px;
   border: 1px solid transparent;

@@ -1,11 +1,12 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import './App.css'
 import { useAuth } from './auth/AuthContext'
+import { use, useState } from 'react'
 
 export default function App() {
   const { user, logout, hasRole } = useAuth()
   const location = useLocation()
-
+const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navLinkStyle = (path: string) => ({
     padding: '8px 16px',
     borderRadius: '6px',
@@ -33,7 +34,6 @@ export default function App() {
                 Библиотека
               </Link>
               <nav style={{ display: 'flex', gap: '8px' }}>
-                <Link to="/" style={navLinkStyle('/')}>Каталог</Link>
                 {user && <Link to="/dashboard" style={navLinkStyle('/dashboard')}>Мои книги</Link>}
                 {hasRole('LIBRARIAN', 'ADMIN') && (
                   <Link to="/librarian" style={navLinkStyle('/librarian')}>Управление</Link>
