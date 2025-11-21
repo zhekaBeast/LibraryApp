@@ -18,7 +18,25 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const auth = (req as any).auth as { userId: number };
   const { bookId } = req.body;
-  const r = await prisma.reservation.create({ data: { userId: auth.userId, bookId } });
+
+  const existingReservation = await prisma.reservation.findFirst({
+    where: { 
+      userId: auth.userId, 
+      bookId,
+      status: 'active' 
+    }
+  });
+
+  if (existingReservation) {
+    return res.status(400).json({ 
+      error: 'У вас уже есть активное бронирование этой книги' 
+    });
+  }
+
+  const r = await prisma.reservation.create({ 
+    data: { userId: auth.userId, bookId } 
+  });
+  
   res.status(201).json(r);
 });
 

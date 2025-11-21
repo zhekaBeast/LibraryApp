@@ -98,8 +98,9 @@ export default function CatalogPage() {
 									border: '1px solid #e5e7eb',
 									borderRadius: '8px',
 									padding: '20px',
+									justifyContent: 'space-between',
 									boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-									transition: 'all 0.2s'
+									transition: 'all 0.2s',
 								}}
 								onMouseOver={(e) => {
 									e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
@@ -139,12 +140,14 @@ export default function CatalogPage() {
 											</span>
 										)}
 									</div>
+									
 									<Link 
 										to={`/book/${book.id}`}
 										style={{
 											background: '#2563eb',
 											color: '#fff',
 											padding: '8px 16px',
+											justifyContent: 'center',
 											borderRadius: '6px',
 											textDecoration: 'none',
 											fontSize: '14px',

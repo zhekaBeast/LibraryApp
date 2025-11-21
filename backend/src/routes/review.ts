@@ -1,0 +1,70 @@
+const { Router } = require('express');
+const prisma = require('../prisma').default || require('../prisma');
+const { requireAuth } = require('../middleware/auth');
+
+const router = Router();
+
+// Получить отзывы для книги
+router.get('/book/:bookId', async (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const reviews = await prisma.review.findMany({
+    where: { bookId },
+    include: { user: { select: { name: true } } },
+    orderBy: { createdAt: 'desc' }
+  });
+  res.json(reviews);
+});
+
+// Получить отзывы пользователя
+router.get('/my', requireAuth, async (req, res) => {
+  const auth = (req as any).auth as { userId: number };
+  const reviews = await prisma.review.findMany({
+    where: { userId: auth.userId },
+    include: { book: true },
+    orderBy: { createdAt: 'desc' }
+  });
+  res.json(reviews);
+});
+
+// Создать/обновить отзыв
+router.post('/', requireAuth, async (req, res) => {
+  const auth = (req as any).auth as { userId: number };
+  const { bookId, rating, comment } = req.body;
+  
+  // Валидация рейтинга
+  if (rating < 1 || rating > 5) {
+    return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+  }
+  
+  const review = await prisma.review.upsert({
+    where: {
+      userId_bookId: {
+        userId: auth.userId,
+        bookId
+      }
+    },
+    update: { rating, comment },
+    create: { userId: auth.userId, bookId, rating, comment }
+  });
+  
+  res.status(201).json(review);
+});
+
+// Удалить отзыв
+router.delete('/:id', requireAuth, async (req, res) => {
+  const auth = (req as any).auth as { userId: number };
+  const id = parseInt(req.params.id);
+  
+  const review = await prisma.review.findFirst({
+    where: { id, userId: auth.userId }
+  });
+  
+  if (!review) {
+    return res.status(404).json({ error: 'Review not found' });
+  }
+  
+  await prisma.review.delete({ where: { id } });
+  res.json({ message: 'Review deleted' });
+});
+
+module.exports = router;

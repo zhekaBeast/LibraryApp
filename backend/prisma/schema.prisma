@@ -13,15 +13,25 @@ enum Role {
   ADMIN
 }
 
+enum CopyStatus {
+  AVAILABLE
+  BORROWED
+  MAINTENANCE
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int           @id @default(autoincrement())
+  email     String        @unique
   name      String
   passwordHash String
-  role      Role     @default(READER)
-  loans     Loan[]
-  reserves  Reservation[]
-  createdAt DateTime @default(now())
+  role      Role          @default(READER)
+  createdAt DateTime      @default(now())
 }
 
 model Book {
@@ -30,8 +40,6 @@ model Book {
   author      String
   isbn        String?        @unique
   genre       String?
-  copies      BookCopy[]
-  reserves    Reservation[]
   createdAt   DateTime       @default(now())
 }
 
@@ -39,9 +47,8 @@ model BookCopy {
   id        Int      @id @default(autoincrement())
   book      Book     @relation(fields: [bookId], references: [id])
   bookId    Int
-  status    String   @default("available")
+  status    CopyStatus @default(AVAILABLE)
   location  String?
-  loans     Loan[]
 }
 
 model Loan {
@@ -54,6 +61,7 @@ model Loan {
   dueAt      DateTime
   returnedAt DateTime?
   fineCents  Int       @default(0)
+  status     LoanStatus @default(ACTIVE)
 }
 
 model Reservation {
@@ -63,5 +71,30 @@ model Reservation {
   book      Book     @relation(fields: [bookId], references: [id])
   bookId    Int
   status    String   @default("active")
+  createdAt DateTime @default(now())
+  expiresAt DateTime? 
+  status    ReserveStatus @default(ACTIVE)
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  rating    Int      
+  comment   String?  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, bookId]) 
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  title     String   
+  message   String  
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }

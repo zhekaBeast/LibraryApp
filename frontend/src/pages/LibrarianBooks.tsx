@@ -2,27 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
+import type { Book } from '../dto/Book';
+import type { BookCopy } from '../dto/BookCopy';
 
-interface Book {
-	id: number;
-	title: string;
-	author: string;
-	isbn?: string | null;
-	genre?: string | null;
-	copies: BookCopy[];
-	createdAt: string;
-}
 
-interface BookCopy {
-	id: number;
-	bookId: number;
-	status: string;
-	location?: string | null;
-}
+
 
 export default function LibrarianBooksPage() {
 	const { addToast } = useToast();
 	const [books, setBooks] = useState<Book[]>([]);
+	const [bookCopies, setBookCopies] = useState<BookCopy[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [showAddForm, setShowAddForm] = useState(false);
@@ -336,15 +325,15 @@ export default function LibrarianBooksPage() {
 							{/* Copies */}
 							<div>
 								<h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937', marginBottom: '12px' }}>
-									Экземпляры ({book.copies.length})
+									Экземпляры ({bookCopies.length})
 								</h4>
-								{book.copies.length === 0 ? (
+								{bookCopies.length === 0 ? (
 									<p style={{ color: '#6b7280', fontStyle: 'italic' }}>
 										Нет экземпляров
 									</p>
 								) : (
 									<div style={{ display: 'grid', gap: '8px' }}>
-										{book.copies.map((copy) => (
+									{bookCopies.map((copy) => (
 											<div 
 												key={copy.id}
 												style={{

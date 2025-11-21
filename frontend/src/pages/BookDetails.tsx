@@ -3,33 +3,19 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuth } from '../auth/AuthContext';
 import { useToast } from '../contexts/ToastContext';
+import type { Book } from '../dto/Book';
+import type { BookCopy } from '../dto/BookCopy';
 
-interface BookCopy {
-	id: number;
-	bookId: number;
-	status: string;
-	location?: string | null;
-}
-
-interface Book {
-	id: number;
-	title: string;
-	author: string;
-	isbn?: string | null;
-	genre?: string | null;
-	copies: BookCopy[];
-	createdAt: string;
-}
 
 export default function BookDetailsPage() {
 	const { id } = useParams<{ id: string }>();
 	const { user, hasRole } = useAuth();
 	const { addToast } = useToast();
 	const [book, setBook] = useState<Book | null>(null);
+	const [copies, setCopies] = useState<BookCopy[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [reserving, setReserving] = useState(false);
-
 	useEffect(() => {
 		if (!id) return;
 		
@@ -38,6 +24,11 @@ export default function BookDetailsPage() {
 		api.get<Book>(`/api/books/${id}`)
 			.then((data) => {
 				if (active) setBook(data);
+				api.get<BookCopy[]>(`/api/copies/${id}`)
+					.then((data) => {
+						if (active) setCopies(data);
+					})
+					.catch((e) => setError(e.message));
 			})
 			.catch((e) => setError(e.message))
 			.finally(() => setLoading(false));
@@ -61,8 +52,9 @@ export default function BookDetailsPage() {
 		}
 	};
 
-	const availableCopies = book?.copies.filter(copy => copy.status === 'available') || [];
+	const availableCopies = copies.filter(copy => copy.status === 'available') || [];
 	const isAvailable = availableCopies.length > 0;
+	//const allCopiesTaken = copies.length > 0 && availableCopies.length === 0;
 
 	if (loading) {
 		return (
@@ -74,7 +66,7 @@ export default function BookDetailsPage() {
 
 	if (error || !book) {
 		return (
-			<div style={{ textAlign: 'center', padding: '48px' }}>
+			<div style={{ textAlign: 'left', padding: '48px' }}>
 				<p style={{ color: '#dc2626' }}>Ошибка: {error || 'Книга не найдена'}</p>
 				<Link to="/" style={{ color: '#2563eb', textDecoration: 'none' }}>
 					← Вернуться к каталогу
@@ -85,7 +77,7 @@ export default function BookDetailsPage() {
 
 	return (
 		<div>
-			<div style={{ marginBottom: '24px' }}>
+			<div style={{ marginBottom: '24px', textAlign: 'left' }}>
 				<Link 
 					to="/" 
 					style={{ 
@@ -140,6 +132,12 @@ export default function BookDetailsPage() {
 								{book.genre}
 							</span>
 						)}
+						
+						{book.isbn && (
+							<div style={{ marginBottom: '16px' }}>
+								<strong style={{ color: '#374151' }}>ISBN: {book.isbn}</strong> 
+							</div>
+						)}
 					</div>
 					<div style={{ textAlign: 'right' }}>
 						<div style={{
@@ -152,55 +150,11 @@ export default function BookDetailsPage() {
 						}}>
 							{isAvailable ? 'Доступна' : 'Недоступна'}
 						</div>
+
 					</div>
 				</div>
 
-				{book.isbn && (
-					<div style={{ marginBottom: '16px' }}>
-						<strong style={{ color: '#374151' }}>ISBN:</strong> {book.isbn}
-					</div>
-				)}
-
-				<div style={{ marginBottom: '24px' }}>
-					<h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '12px' }}>
-						Экземпляры ({book.copies.length})
-					</h3>
-					<div style={{ display: 'grid', gap: '8px' }}>
-						{book.copies.map((copy) => (
-							<div 
-								key={copy.id}
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-									padding: '12px 16px',
-									background: copy.status === 'available' ? '#f0f9ff' : '#f9fafb',
-									border: `1px solid ${copy.status === 'available' ? '#0ea5e9' : '#e5e7eb'}`,
-									borderRadius: '8px'
-								}}
-							>
-								<div>
-									<span style={{ fontWeight: '500' }}>Экземпляр #{copy.id}</span>
-									{copy.location && (
-										<span style={{ color: '#6b7280', marginLeft: '8px' }}>
-											({copy.location})
-										</span>
-									)}
-								</div>
-								<span style={{
-									padding: '4px 8px',
-									borderRadius: '4px',
-									fontSize: '12px',
-									fontWeight: '500',
-									background: copy.status === 'available' ? '#dcfce7' : '#fef2f2',
-									color: copy.status === 'available' ? '#166534' : '#dc2626'
-								}}>
-									{copy.status === 'available' ? 'Доступен' : 'Выдан'}
-								</span>
-							</div>
-						))}
-					</div>
-				</div>
+				
 
 				{user && (
 					<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -257,6 +211,46 @@ export default function BookDetailsPage() {
 					<h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '16px' }}>
 						Управление (только для библиотекарей)
 					</h3>
+					<div style={{ marginBottom: '24px' }}>
+					<h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '12px' }}>
+						Экземпляры ({copies.length})
+					</h3>
+					<div style={{ display: 'grid', gap: '8px' }}>
+						{copies.map((copy) => (
+							<div
+								key={copy.id}
+								style={{
+									display: 'flex',
+									justifyContent: 'space-between',
+									alignItems: 'center',
+									padding: '12px 16px',
+									background: copy.status === 'available' ? '#f0f9ff' : '#f9fafb',
+									border: `1px solid ${copy.status === 'available' ? '#0ea5e9' : '#e5e7eb'}`,
+									borderRadius: '8px'
+								}}
+							>
+								<div>
+									<span style={{ fontWeight: '500' }}>Экземпляр #{copy.id}</span>
+									{copy.location && (
+										<span style={{ color: '#6b7280', marginLeft: '8px' }}>
+											({copy.location})
+										</span>
+									)}
+								</div>
+								<span style={{
+									padding: '4px 8px',
+									borderRadius: '4px',
+									fontSize: '12px',
+									fontWeight: '500',
+									background: copy.status === 'available' ? '#dcfce7' : '#fef2f2',
+									color: copy.status === 'available' ? '#166534' : '#dc2626'
+								}}>
+									{copy.status === 'available' ? 'Доступен' : 'Не доступен'}
+								</span>
+							</div>
+						))}
+					</div>
+				</div>
 					<div style={{ display: 'flex', gap: '12px' }}>
 						<button style={{
 							background: '#10b981',

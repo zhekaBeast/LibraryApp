@@ -8,6 +8,8 @@ const reservationsRouter = require('./routes/reservations').default || require('
 const copiesRouter = require('./routes/copies').default || require('./routes/copies');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger').swaggerSpec;
+const notificationsRouter = require('./routes/notifications').default || require('./routes/notifications'); 
+const reviewsRouter = require('./routes/reviews').default || require('./routes/reviews'); 
 
 const app = express();
 app.use(cors());
@@ -19,6 +21,8 @@ app.use('/api/books', booksRouter);
 app.use('/api/loans', loansRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/copies', copiesRouter);
+app.use('/api/notifications', notificationsRouter); 
+app.use('/api/reviews', reviewsRouter);
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
