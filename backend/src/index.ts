@@ -10,6 +10,10 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger').swaggerSpec;
 const notificationsRouter = require('./routes/notifications').default || require('./routes/notifications'); 
 const reviewsRouter = require('./routes/reviews').default || require('./routes/reviews'); 
+const adminRouter = require('./routes/admin').default || require('./routes/admin'); 
+
+
+
 
 const app = express();
 app.use(cors());
@@ -23,7 +27,7 @@ app.use('/api/reservations', reservationsRouter);
 app.use('/api/copies', copiesRouter);
 app.use('/api/notifications', notificationsRouter); 
 app.use('/api/reviews', reviewsRouter);
-
+app.use('/api/admin', adminRouter);
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;

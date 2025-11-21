@@ -166,6 +166,24 @@ export default function App() {
                           </Link>
                         )}
 
+````````````````````````{hasRole('ADMIN') && (
+                          <Link 
+                            to="/admin" 
+                            style={{
+                              display: 'block',
+                              padding: '12px 16px',
+                              textDecoration: 'none',
+                              color: location.pathname === '/librarian' ? '#2563eb' : '#374151',
+                              backgroundColor: location.pathname === '/librarian' ? '#eff6ff' : 'transparent',
+                              fontWeight: location.pathname === '/librarian' ? '600' : '400',
+                              transition: 'all 0.2s'
+                            }}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            Панель управления
+                          </Link>
+                        )}
+
                         <div style={{ borderTop: '1px solid #e5e7eb', margin: '4px 0' }} />
                         <button 
                           onClick={() => {

@@ -16,9 +16,17 @@ export default function BookDetailsPage() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [reserving, setReserving] = useState(false);
+
+	const [addingCopy, setAddingCopy] = useState(false);
+	const [deletingCopyId, setDeletingCopyId] = useState<number | null>(null);
+	const [showPrintModal, setShowPrintModal] = useState(false);
+	const [newCopyId, setNewCopyId] = useState<number | null>(null);
+
+
+
 	useEffect(() => {
 		if (!id) return;
-		
+
 		let active = true;
 		setLoading(true);
 		api.get<Book>(`/api/books/${id}`)
@@ -37,9 +45,47 @@ export default function BookDetailsPage() {
 		};
 	}, [id]);
 
+	const handleAddCopy = async () => {
+		if (!book) return;
+
+		setAddingCopy(true);
+		try {
+			const newCopy = await api.post<BookCopy>('/api/copies', {
+				bookId: book.id,
+				location: 'Основной фонд' // или любое значение по умолчанию
+			});
+
+			setCopies(prev => [...prev, newCopy]);
+			setNewCopyId(newCopy.id);
+			setShowPrintModal(true);
+			addToast('Экземпляр успешно добавлен!', 'success');
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : 'Ошибка добавления экземпляра';
+			addToast(errorMessage, 'error');
+		} finally {
+			setAddingCopy(false);
+		}
+	};
+
+	// Функция удаления копии
+	const handleDeleteCopy = async (copyId: number) => {
+		if (deletingCopyId !== null) return;
+		setDeletingCopyId(copyId);
+		try {
+			await api.delete(`/api/copies/${copyId}`);
+			setCopies(prev => prev.filter(copy => copy.id !== copyId));
+			addToast('Экземпляр удален', 'success');
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : 'Ошибка удаления экземпляра';
+			addToast(errorMessage, 'error');
+		} finally {
+			setDeletingCopyId(null);
+		}
+	};
+
 	const handleReserve = async () => {
 		if (!book || !user) return;
-		
+
 		setReserving(true);
 		try {
 			await api.post('/api/reservations', { bookId: book.id });
@@ -78,10 +124,10 @@ export default function BookDetailsPage() {
 	return (
 		<div>
 			<div style={{ marginBottom: '24px', textAlign: 'left' }}>
-				<Link 
-					to="/" 
-					style={{ 
-						color: '#6b7280', 
+				<Link
+					to="/"
+					style={{
+						color: '#6b7280',
 						textDecoration: 'none',
 						fontSize: '14px',
 						display: 'inline-flex',
@@ -94,27 +140,27 @@ export default function BookDetailsPage() {
 				</Link>
 			</div>
 
-			<div style={{ 
-				background: '#fff', 
-				borderRadius: '12px', 
+			<div style={{
+				background: '#fff',
+				borderRadius: '12px',
 				padding: '32px',
 				boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
 				marginBottom: '24px'
 			}}>
 				<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
 					<div style={{ flex: 1 }}>
-						<h1 style={{ 
-							fontSize: '32px', 
-							fontWeight: '700', 
-							color: '#1f2937', 
-							margin: '0 0 8px 0' 
+						<h1 style={{
+							fontSize: '32px',
+							fontWeight: '700',
+							color: '#1f2937',
+							margin: '0 0 8px 0'
 						}}>
 							{book.title}
 						</h1>
-						<p style={{ 
-							fontSize: '20px', 
-							color: '#6b7280', 
-							margin: '0 0 16px 0' 
+						<p style={{
+							fontSize: '20px',
+							color: '#6b7280',
+							margin: '0 0 16px 0'
 						}}>
 							{book.author}
 						</p>
@@ -132,10 +178,10 @@ export default function BookDetailsPage() {
 								{book.genre}
 							</span>
 						)}
-						
+
 						{book.isbn && (
 							<div style={{ marginBottom: '16px' }}>
-								<strong style={{ color: '#374151' }}>ISBN: {book.isbn}</strong> 
+								<strong style={{ color: '#374151' }}>ISBN: {book.isbn}</strong>
 							</div>
 						)}
 					</div>
@@ -154,7 +200,7 @@ export default function BookDetailsPage() {
 					</div>
 				</div>
 
-				
+
 
 				{user && (
 					<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -202,9 +248,9 @@ export default function BookDetailsPage() {
 			</div>
 
 			{hasRole('LIBRARIAN', 'ADMIN') && (
-				<div style={{ 
-					background: '#fff', 
-					borderRadius: '12px', 
+				<div style={{
+					background: '#fff',
+					borderRadius: '12px',
 					padding: '24px',
 					boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
 				}}>
@@ -212,56 +258,75 @@ export default function BookDetailsPage() {
 						Управление (только для библиотекарей)
 					</h3>
 					<div style={{ marginBottom: '24px' }}>
-					<h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '12px' }}>
-						Экземпляры ({copies.length})
-					</h3>
-					<div style={{ display: 'grid', gap: '8px' }}>
-						{copies.map((copy) => (
-							<div
-								key={copy.id}
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-									padding: '12px 16px',
-									background: copy.status === 'available' ? '#f0f9ff' : '#f9fafb',
-									border: `1px solid ${copy.status === 'available' ? '#0ea5e9' : '#e5e7eb'}`,
-									borderRadius: '8px'
-								}}
-							>
-								<div>
-									<span style={{ fontWeight: '500' }}>Экземпляр #{copy.id}</span>
-									{copy.location && (
-										<span style={{ color: '#6b7280', marginLeft: '8px' }}>
-											({copy.location})
-										</span>
-									)}
-								</div>
-								<span style={{
-									padding: '4px 8px',
-									borderRadius: '4px',
-									fontSize: '12px',
-									fontWeight: '500',
-									background: copy.status === 'available' ? '#dcfce7' : '#fef2f2',
-									color: copy.status === 'available' ? '#166534' : '#dc2626'
-								}}>
-									{copy.status === 'available' ? 'Доступен' : 'Не доступен'}
-								</span>
-							</div>
-						))}
+						<h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '12px' }}>
+							Экземпляры ({copies.length})
+						</h3>
+						<div style={{ display: 'grid', gap: '8px' }}>
+							{copies.map((copy) => {
+								return (
+									<div
+										key={copy.id}
+										style={{
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+											padding: '12px 16px',
+											background: copy.status === 'available' ? '#f0f9ff' : '#f9fafb',
+											border: `1px solid ${copy.status === 'available' ? '#0ea5e9' : '#e5e7eb'}`,
+											borderRadius: '8px'
+										}}
+									>
+										<div>
+											<span style={{ color: '#6b7280', fontWeight: '500' }}>Экземпляр #{copy.id}</span>
+										</div>
+										<div>
+
+											<button
+												onClick={() => {
+													if (copy.status !== 'available') {
+														addToast('Нельзя удалить выданную копию', 'warning');
+														return;
+													}
+													handleDeleteCopy(copy.id);
+												}}
+												disabled={deletingCopyId === copy.id}
+												style={{
+													background: copy.status === 'available' ? '#ef4444' : '#9ca3af',
+													color: 'white',
+													border: 'none',
+													borderRadius: '4px',
+													padding: '4px 8px',
+													fontSize: '12px',
+													cursor: deletingCopyId === copy.id ? 'not-allowed' : 'pointer',
+													opacity: deletingCopyId === copy.id ? 0.5 : 1,
+													minWidth: '24px'
+												}}
+												title={copy.status !== 'available' ? 'Нельзя удалить выданную копию' : 'Удалить экземпляр'}
+											>
+												{deletingCopyId === copy.id ? '...' : '✕'}
+											</button>
+										</div>
+									</div>
+								);
+							})}
+						</div>
 					</div>
-				</div>
 					<div style={{ display: 'flex', gap: '12px' }}>
-						<button style={{
-							background: '#10b981',
-							color: '#fff',
-							padding: '8px 16px',
-							border: 'none',
-							borderRadius: '6px',
-							fontSize: '14px',
-							cursor: 'pointer'
-						}}>
-							Добавить экземпляр
+						<button
+							onClick={handleAddCopy}
+							disabled={addingCopy}
+							style={{
+								background: '#10b981',
+								color: '#fff',
+								padding: '8px 16px',
+								border: 'none',
+								borderRadius: '6px',
+								fontSize: '14px',
+								cursor: addingCopy ? 'not-allowed' : 'pointer',
+								opacity: addingCopy ? 0.7 : 1
+							}}
+						>
+							{addingCopy ? 'Добавление...' : 'Добавить экземпляр'}
 						</button>
 						<button style={{
 							background: '#f59e0b',

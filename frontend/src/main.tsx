@@ -14,6 +14,7 @@ import LibrarianDashboardPage from './pages/LibrarianDashboard'
 import LibrarianBooksPage from './pages/LibrarianBooks'
 import LibrarianLoansPage from './pages/LibrarianLoans'
 import { Protected } from './auth/Protected'
+import AdminPanel from './pages/AdminPanel.tsx'
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <CatalogPage /> },
       { path: 'login', element: <LoginPage /> },
+      { path: 'admin', element: <AdminPanel /> },
       { path: 'register', element: <RegisterPage /> },
       { path: 'book/:id', element: <BookDetailsPage /> },
       { 

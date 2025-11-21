@@ -16,7 +16,7 @@ enum Role {
 enum CopyStatus {
   AVAILABLE
   BORROWED
-  MAINTENANCE
+  DELETED
 }
 
 enum LoanStatus {
@@ -48,7 +48,6 @@ model BookCopy {
   book      Book     @relation(fields: [bookId], references: [id])
   bookId    Int
   status    CopyStatus @default(AVAILABLE)
-  location  String?
 }
 
 model Loan {

@@ -6,7 +6,6 @@ const router = Router();
 
 router.use(requireAuth);
 
-// Получить уведомления пользователя
 router.get('/', async (req, res) => {
   const auth = (req as any).auth as { userId: number };
   const notifications = await prisma.notification.findMany({
@@ -16,7 +15,6 @@ router.get('/', async (req, res) => {
   res.json(notifications);
 });
 
-// Пометить уведомление как прочитанное
 router.patch('/:id/read', async (req, res) => {
   const auth = (req as any).auth as { userId: number };
   const id = parseInt(req.params.id);
@@ -29,7 +27,6 @@ router.patch('/:id/read', async (req, res) => {
   res.json(notification);
 });
 
-// Пометить все уведомления как прочитанные
 router.post('/read-all', async (req, res) => {
   const auth = (req as any).auth as { userId: number };
   
