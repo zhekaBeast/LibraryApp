@@ -32,7 +32,7 @@ async function main() {
     create: { title: 'Clean Code', author: 'Robert C. Martin', genre: 'Software', isbn: '9780132350884' },
   });
 
-  const copy1 = await prisma.bookCopy.create({ data: { bookId: book.id, location: 'Main' } });
+  const copy1 = await prisma.bookCopy.create({ data: { bookId: book.id } });
   await prisma.loan.create({ data: { userId: reader.id, copyId: copy1.id, dueAt: new Date(Date.now() + 7 * 86400000) } });
 }
 

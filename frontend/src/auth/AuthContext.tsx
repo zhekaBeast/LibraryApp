@@ -12,6 +12,7 @@ interface AuthContextValue extends AuthState {
 	register: (params: { email: string; name: string; password: string }) => Promise<void>;
 	logout: () => void;
 	hasRole: (...roles: Role[]) => boolean;
+	switchRole: (role: Role) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -48,10 +49,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		return state.user ? roles.includes(state.user.role) : false;
 	}, [state.user]);
 
-	const value = useMemo<AuthContextValue>(() => ({ ...state, login, register, logout, hasRole }), [state, login, register, logout, hasRole]);
+	const switchRole = useCallback((role: Role) => {
+		if (state.user) {
+		  const updatedUser = { ...state.user, role };
+		  setState(prev => ({ ...prev, user: updatedUser }));
+		}
+	  }, [state.user]);
+
+	const value = useMemo<AuthContextValue>(() => ({ ...state, login, register, logout, hasRole, switchRole }), [state, login, register, logout, hasRole]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
+
 
 export function useAuth(): AuthContextValue {
 	const ctx = useContext(AuthContext);

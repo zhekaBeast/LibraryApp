@@ -26,28 +26,37 @@ enum LoanStatus {
 }
 
 model User {
-  id        Int           @id @default(autoincrement())
-  email     String        @unique
-  name      String
-  passwordHash String
-  role      Role          @default(READER)
-  createdAt DateTime      @default(now())
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  name          String
+  passwordHash  String
+  role          Role           @default(READER)
+  createdAt     DateTime       @default(now())
+  loans         Loan[]
+  reservations  Reservation[]
+  reviews       Review[]
+  notifications Notification[]
 }
 
 model Book {
-  id          Int            @id @default(autoincrement())
-  title       String
-  author      String
-  isbn        String?        @unique
-  genre       String?
-  createdAt   DateTime       @default(now())
+  id           Int            @id @default(autoincrement())
+  title        String
+  author       String
+  isbn         String?        @unique
+  genre        String?
+  year         Int?
+  createdAt    DateTime       @default(now())
+  copies       BookCopy[]
+  reservations Reservation[]
+  reviews      Review[]
 }
 
 model BookCopy {
-  id        Int      @id @default(autoincrement())
-  book      Book     @relation(fields: [bookId], references: [id])
-  bookId    Int
+  id        Int        @id @default(autoincrement())
+  book      Book       @relation(fields: [bookId], references: [id])
+  barcode   String     @unique
   status    CopyStatus @default(AVAILABLE)
+  loans     Loan[]
 }
 
 model Loan {
@@ -72,7 +81,6 @@ model Reservation {
   status    String   @default("active")
   createdAt DateTime @default(now())
   expiresAt DateTime? 
-  status    ReserveStatus @default(ACTIVE)
 }
 
 model Review {
@@ -96,4 +104,22 @@ model Notification {
   message   String  
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model SystemConfig {
+  id             Int @id @default(autoincrement())
+  loanPeriodDays Int @default(14)
+  finePerDay     Int @default(10) // в копейках
+}
+
+model AvailabilitySubscription {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  book      Book     @relation(fields: [bookId], references: [id]) 
+  bookId    Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, bookId])
 }

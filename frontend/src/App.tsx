@@ -2,9 +2,10 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import './App.css'
 import { useAuth } from './auth/AuthContext'
 import { useState, useEffect, useRef } from 'react'
+import type { Role } from './types'
 
 export default function App() {
-  const { user, logout, hasRole } = useAuth()
+  const { user, logout, hasRole, switchRole } = useAuth()
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -30,16 +31,16 @@ export default function App() {
     borderRadius: '6px',
     textDecoration: 'none',
     color: location.pathname === path ? '#2563eb' : '#374151',
-    backgroundColor: location.pathname === path ? '#eff6ff' : 'transparent',
+    backgroundColor: location.pathname === path ? '#545454' : 'transparent',
     fontWeight: location.pathname === path ? '600' : '400',
     transition: 'all 0.2s'
   })
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ 
-        background: '#fff', 
-        borderBottom: '1px solid #e5e7eb',
+      <header style={{
+        background: '#fff',
+        borderBottom: '1px solid #545454',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
         position: 'sticky',
         top: 0,
@@ -49,13 +50,13 @@ export default function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
             {/* Логотип и навигация */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-              <Link to="/" style={{ fontSize: '20px', fontWeight: '700', color: '#1f2937', textDecoration: 'none' }}>
+              <Link to="/" style={{ fontSize: '20px', fontWeight: '700', color: '#545454', textDecoration: 'none' }}>
                 Библиотека
               </Link>
-              
-              
+
+
             </div>
-            
+
             {/* Правая часть с информацией о пользователе */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               {!user ? (
@@ -65,9 +66,22 @@ export default function App() {
                 </>
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#6b7280', fontSize: '14px' }}>
-                    {user.name} ({user.role === 'READER' ? 'Читатель' : user.role === 'LIBRARIAN' ? 'Библиотекарь' : 'Администратор'})
-                  </span>
+                  <span style={{ color: '#6b7280', fontSize: '14px' }}>{user.name}</span>
+                  <select
+                    value={user.role}
+                    onChange={(e) => switchRole(e.target.value as Role)}
+                    style={{
+                      padding: '4px 8px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      background: 'white'
+                    }}
+                  >
+                    <option value="READER">Читатель</option>
+                    <option value="LIBRARIAN">Библиотекарь</option>
+                    <option value="ADMIN">Администратор</option>
+                  </select>
                 </div>
               )}
               {/* Гамбургер-меню */}
@@ -132,8 +146,8 @@ export default function App() {
                     }}>
                       <div style={{ padding: '8px 0' }}>
 
-                        <Link 
-                          to="/dashboard" 
+                        <Link
+                          to="/dashboard"
                           style={{
                             display: 'block',
                             padding: '12px 16px',
@@ -149,8 +163,8 @@ export default function App() {
                         </Link>
 
                         {hasRole('LIBRARIAN', 'ADMIN') && (
-                          <Link 
-                            to="/librarian" 
+                          <Link
+                            to="/librarian"
                             style={{
                               display: 'block',
                               padding: '12px 16px',
@@ -166,9 +180,9 @@ export default function App() {
                           </Link>
                         )}
 
-````````````````````````{hasRole('ADMIN') && (
-                          <Link 
-                            to="/admin" 
+                        ````````````````````````{hasRole('ADMIN') && (
+                          <Link
+                            to="/admin"
                             style={{
                               display: 'block',
                               padding: '12px 16px',
@@ -185,7 +199,7 @@ export default function App() {
                         )}
 
                         <div style={{ borderTop: '1px solid #e5e7eb', margin: '4px 0' }} />
-                        <button 
+                        <button
                           onClick={() => {
                             logout()
                             setIsMobileMenuOpen(false)
@@ -220,8 +234,8 @@ export default function App() {
           </div>
         </div>
       </header>
-      
-      <main style={{ flex: 1, background: '#f9fafb' }}>
+
+      <main style={{ flex: 1, background: '#003566' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px' }}>
           <Outlet />
         </div>

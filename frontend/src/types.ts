@@ -12,4 +12,18 @@ export interface AuthResponse {
 	user: User;
 }
 
+export interface Book {
+	id: number;
+	title: string;
+	author: string;
+	isbn?: string | null;
+	genre?: string | null;
+	createdAt: string;
+}
 
+
+export interface BookCopy {
+	id: number;
+	bookId: number;
+	status: string;
+}
