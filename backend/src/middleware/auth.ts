@@ -20,7 +20,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     const decoded = jwt.verify(token, JWT_SECRET) as AuthPayload;
     (req as any).auth = decoded;
     next();
-  } catch {
+  } catch (err) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }
@@ -28,7 +28,6 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 export function requireRole(...roles: AuthPayload['role'][]) {
   return (req: Request, res: Response, next: NextFunction) => {
     const auth = (req as any).auth as AuthPayload | undefined;
-    console.log('Auth payload:', auth)
     if (!auth || !roles.includes(auth.role)) return res.status(403).json({ error: 'Forbidden' });
     next();
   };

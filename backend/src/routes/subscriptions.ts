@@ -20,25 +20,34 @@ router.post('/', async (req, res) => {
   const auth = (req as any).auth as { userId: number };
   const { bookId } = req.body;
 
-  const existing = await prisma.availabilitySubscription.findFirst({
-    where: { 
-      userId: auth.userId, 
-      bookId,
-      isActive: true 
-    }
-  });
-
-  if (existing) {
-    return res.status(400).json({ 
-      error: 'Вы уже подписаны на уведомления для этой книги' 
+  try {
+    // Пытаемся найти любую подписку (активную или нет)
+    const existing = await prisma.availabilitySubscription.findFirst({
+      where: { 
+        userId: auth.userId, 
+        bookId
+      }
     });
-  }
 
-  const subscription = await prisma.availabilitySubscription.create({ 
-    data: { userId: auth.userId, bookId, isActive: true } 
-  });
-  
-  res.status(201).json(subscription);
+    if (existing) {
+      // Если нашли - активируем её
+      const subscription = await prisma.availabilitySubscription.update({
+        where: { id: existing.id },
+        data: { isActive: true }
+      });
+      return res.status(200).json(subscription);
+    }
+
+    // Если не нашли - создаём новую
+    const subscription = await prisma.availabilitySubscription.create({ 
+      data: { userId: auth.userId, bookId, isActive: true } 
+    });
+    
+    res.status(201).json(subscription);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
 });
 
 router.delete('/:bookId', async (req, res) => {

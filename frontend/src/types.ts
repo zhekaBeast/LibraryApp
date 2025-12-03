@@ -16,14 +16,16 @@ export interface Book {
 	id: number;
 	title: string;
 	author: string;
-	isbn?: string | null;
-	genre?: string | null;
-	createdAt: string;
-}
+	genre?: string;
+	year?: number;
+	isbn?: string;
+	description?: string;
+  }
+  
 
 
-export interface BookCopy {
+export interface Copy {
 	id: number;
-	bookId: number;
-	status: string;
-}
+	status: 'AVAILABLE' | 'BORROWED' | 'DELETED';
+	barcode: string;
+  }

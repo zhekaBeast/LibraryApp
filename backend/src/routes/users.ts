@@ -13,8 +13,8 @@ router.get('/search', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), 
   const users = await prisma.user.findMany({
     where: {
       OR: [
-        { email: { contains: q, mode: 'insensitive' } },
-        { name: { contains: q, mode: 'insensitive' } }
+        { email: { contains: q } },
+        { name: { contains: q} }
       ]
     },
     select: { id: true, email: true, name: true, role: true }

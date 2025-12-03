@@ -11,6 +11,18 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    
+    const root = document.documentElement;
+    if (isDark) {
+      root.setAttribute('data-theme', 'dark');
+    } else {
+      root.removeAttribute('data-theme');
+    }
+  }, []);
   // Закрытие меню при клике вне его
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -68,9 +80,9 @@ export default function App() {
               )}
 
               {/* Селектор роли */}
-              {user && hasRole('ADMIN', 'LIBRARIAN') && (
+              {user && 
                 <RoleSelector role={user.role} onChange={switchRole} />
-              )}
+              }
               
               {/* Мобильное меню (всегда) */}
               <MobileMenu 

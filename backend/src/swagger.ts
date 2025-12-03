@@ -18,6 +18,7 @@ const swaggerSpec = swaggerJsdoc({
         },
       },
     },
+    security: [{ bearerAuth: [] }],
   },
   apis: [path.join(__dirname, 'routes', '*.ts')],
 });

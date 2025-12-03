@@ -35,8 +35,8 @@ export function ThemeToggle() {
       }}
       aria-label={isDark ? 'Переключить на светлую тему' : 'Переключить на тёмную тему'}
     >
-      {isDark ? '☀️' : '🌙'}
-      <span>{isDark ? 'Светлая' : 'Тёмная'}</span>
+      {isDark ? '🌙' : '☀️'}
+      <span>{'Тема'}</span>
     </button>
   );
 }
