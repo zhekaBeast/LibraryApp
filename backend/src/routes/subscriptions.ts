@@ -62,7 +62,46 @@ router.delete('/:bookId', async (req, res) => {
   res.json({ success: true });
 });
 
+router.get('/check/:bookId', async (req, res) => {
+  const auth = (req as any).auth as { userId: number };
+  const bookId = parseInt(req.params.bookId);
+  
+  const subscription = await prisma.availabilitySubscription.findFirst({
+    where: { 
+      userId: auth.userId, 
+      bookId,
+      isActive: true 
+    }
+  });
+  
+  res.json({ isSubscribed: !!subscription });
+});
+
+
 module.exports = router;
+/**
+ * @openapi
+ * /api/subscriptions/check/{bookId}:
+ *   get:
+ *     tags: [subscriptions]
+ *     summary: Check if user is subscribed to book availability
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Subscription status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isSubscribed:
+ *                   type: boolean
+ *                   example: true
+ */
 
 /**
  * @openapi

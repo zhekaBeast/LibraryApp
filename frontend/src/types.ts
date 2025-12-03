@@ -29,3 +29,23 @@ export interface Copy {
 	status: 'AVAILABLE' | 'BORROWED' | 'DELETED';
 	barcode: string;
   }
+
+export interface Review {
+	id: number;
+	userId: number;
+	bookId: number;
+	rating: number;
+	comment: string | null;
+	createdAt: string;
+	user: {
+	  name: string;
+	};
+  }
+
+  export interface ReviewsSectionProps {
+	bookId: number;
+  }
+
+  export interface SubscriptionCheckResponse {
+	isSubscribed: boolean;
+  }

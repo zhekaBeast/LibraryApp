@@ -160,8 +160,8 @@ export default function CatalogPage() {
               )}
               {book.year && (
                 <span style={{
-                  background: 'var(--color-gray-500)',
-                  color: 'var(--text-secondary)',
+                  background: 'var(--color-gray-200)',
+                  color: 'var(--color-gray-700)',
                   padding: '4px 10px',
                   borderRadius: 12,
                   fontSize: 12
