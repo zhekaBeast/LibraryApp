@@ -1,10 +1,9 @@
 const { Router } = require('express');
 const prisma = require('../prisma').default || require('../prisma');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const auth = require('../middleware/auth');
 
 const router = Router();
 
-router.use(requireAuth);
 
 router.get('/:bookId', async (req, res) => {
   const bookId = Number(req.params.bookId);
@@ -12,17 +11,16 @@ router.get('/:bookId', async (req, res) => {
   res.json(copies);
 });
 
-router.post('/', requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
-  const { bookId, location } = req.body;
-  const copy = await prisma.bookCopy.create({ data: { bookId, location } });
+router.post('/', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
+  const { bookId, barcode } = req.body; 
+  const copy = await prisma.bookCopy.create({ data: { bookId, barcode } });
   res.status(201).json(copy);
 });
 
-router.delete('/:copyId', requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
+router.delete('/:copyId', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
   const copyId = Number(req.params.copyId);
   
   try {
-    // Проверяем, не выдана ли копия сейчас
     const activeLoan = await prisma.loan.findFirst({
       where: { 
         copyId: copyId,
@@ -37,7 +35,7 @@ router.delete('/:copyId', requireRole('LIBRARIAN', 'ADMIN'), async (req, res) =>
     await prisma.bookCopy.update({
       where: { id: copyId },
       data: { 
-        status: 'deleted',
+        status: 'DELETED',
       }
     });
     
@@ -53,3 +51,57 @@ router.delete('/:copyId', requireRole('LIBRARIAN', 'ADMIN'), async (req, res) =>
 
 module.exports = router;
 
+/**
+ * @openapi
+ * /api/copies/{bookId}:
+ *   get:
+ *     tags: [copies]
+ *     summary: Get all copies of a book
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: List of book copies }
+ */
+
+/**
+ * @openapi
+ * /api/copies:
+ *   post:
+ *     tags: [copies]
+ *     summary: Create new book copy
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [bookId, barcode]
+ *             properties:
+ *               bookId: { type: integer }
+ *               barcode: { type: string }
+ *     security:
+ *       - bearerAuth: [] 
+ *     responses:
+ *       201: { description: Copy created }
+ */
+
+/**
+ * @openapi
+ * /api/copies/{copyId}:
+ *   delete:
+ *     tags: [copies]
+ *     summary: Mark copy as deleted
+ *     parameters:
+ *       - in: path
+ *         name: copyId
+ *         required: true
+ *         schema: { type: integer }
+ *     security:
+ *       - bearerAuth: [] 
+ *     responses:
+ *       200: { description: Copy marked as deleted }
+ *       400: { description: Copy is currently borrowed }
+ */

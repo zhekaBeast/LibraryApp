@@ -68,3 +68,63 @@ router.delete('/:id', requireAuth, async (req, res) => {
 });
 
 module.exports = router;
+
+/**
+ * @openapi
+ * /api/reviews/book/{bookId}:
+ *   get:
+ *     tags: [reviews]
+ *     summary: Get reviews for a book
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Book reviews }
+ */
+/**
+ * @openapi
+ * /api/reviews/my:
+ *   get:
+ *     tags: [reviews]
+ *     summary: Get current user's reviews
+ *     responses:
+ *       200: { description: User reviews }
+ */
+/**
+ * @openapi
+ * /api/reviews:
+ *   post:
+ *     tags: [reviews]
+ *     summary: Create or update review
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [bookId, rating]
+ *             properties:
+ *               bookId: { type: integer }
+ *               rating: { type: integer, minimum: 1, maximum: 5 }
+ *               comment: { type: string }
+ *     responses:
+ *       201: { description: Review created/updated }
+ *       400: { description: Invalid rating }
+ */
+/**
+ * @openapi
+ * /api/reviews/{id}:
+ *   delete:
+ *     tags: [reviews]
+ *     summary: Delete review
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Review deleted }
+ *       404: { description: Review not found }
+ */

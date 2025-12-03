@@ -10,9 +10,6 @@ import RegisterPage from './pages/Register'
 import CatalogPage from './pages/Catalog'
 import BookDetailsPage from './pages/BookDetails'
 import DashboardPage from './pages/Dashboard'
-import LibrarianDashboardPage from './pages/LibrarianDashboard'
-import LibrarianBooksPage from './pages/LibrarianBooks'
-import LibrarianLoansPage from './pages/LibrarianLoans'
 import { Protected } from './auth/Protected'
 import AdminPanel from './pages/AdminPanel.tsx'
 
@@ -29,19 +26,7 @@ const router = createBrowserRouter([
       { 
         path: 'dashboard', 
         element: <Protected><DashboardPage /></Protected> 
-      },
-      { 
-        path: 'librarian', 
-        element: <Protected roles={['LIBRARIAN', 'ADMIN']}><LibrarianDashboardPage /></Protected> 
-      },
-      { 
-        path: 'librarian/books', 
-        element: <Protected roles={['LIBRARIAN', 'ADMIN']}><LibrarianBooksPage /></Protected> 
-      },
-      { 
-        path: 'librarian/loans', 
-        element: <Protected roles={['LIBRARIAN', 'ADMIN']}><LibrarianLoansPage /></Protected> 
-      },
+      }
     ],
   },
 ])

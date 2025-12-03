@@ -29,10 +29,23 @@ async function main() {
   const book = await prisma.book.upsert({
     where: { id: 1 },
     update: {},
-    create: { title: 'Clean Code', author: 'Robert C. Martin', genre: 'Software', isbn: '9780132350884' },
+    create: { 
+      title: 'Clean Code', 
+      author: 'Robert C. Martin', 
+      genre: 'Software', 
+      isbn: '9780132350884',
+      year: 2008,
+      description: 'A handbook of agile software craftsmanship'
+    },
   });
-
-  const copy1 = await prisma.bookCopy.create({ data: { bookId: book.id } });
+  
+  const copy1 = await prisma.bookCopy.create({ 
+    data: { 
+      bookId: book.id, 
+      barcode: '9780132350884-001'
+    } 
+  });
+  
   await prisma.loan.create({ data: { userId: reader.id, copyId: copy1.id, dueAt: new Date(Date.now() + 7 * 86400000) } });
 }
 

@@ -39,3 +39,38 @@ router.post('/read-all', async (req, res) => {
 });
 
 module.exports = router;
+
+/**
+ * @openapi
+ * /api/notifications:
+ *   get:
+ *     tags: [notifications]
+ *     summary: Get user's notifications
+ *     responses:
+ *       200: { description: User notifications }
+ */
+
+/**
+ * @openapi
+ * /api/notifications/{id}/read:
+ *   patch:
+ *     tags: [notifications]
+ *     summary: Mark notification as read
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Notification marked as read }
+ */
+
+/**
+ * @openapi
+ * /api/notifications/read-all:
+ *   post:
+ *     tags: [notifications]
+ *     summary: Mark all notifications as read
+ *     responses:
+ *       200: { description: All notifications marked as read }
+ */
