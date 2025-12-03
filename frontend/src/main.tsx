@@ -12,21 +12,50 @@ import BookDetailsPage from './pages/BookDetails'
 import DashboardPage from './pages/Dashboard'
 import { Protected } from './auth/Protected'
 import AdminPanel from './pages/AdminPanel.tsx'
+import AboutPage from './pages/About'
+import './theme.css';
+import './styles/utilities.css';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <CatalogPage /> },
+      {
+        index: true, 
+        element: (
+          <Protected>
+            <CatalogPage />
+          </Protected>
+        ), 
+      },
       { path: 'login', element: <LoginPage /> },
-      { path: 'admin', element: <AdminPanel /> },
       { path: 'register', element: <RegisterPage /> },
-      { path: 'book/:id', element: <BookDetailsPage /> },
+      { 
+        path: 'book/:id', 
+        element: (
+          <Protected>
+            <BookDetailsPage />
+          </Protected>
+        ), 
+      },
       { 
         path: 'dashboard', 
-        element: <Protected><DashboardPage /></Protected> 
-      }
+        element: (
+          <Protected>
+            <DashboardPage />
+          </Protected>
+        ), 
+      },
+      { 
+        path: 'admin', 
+        element: (
+          <Protected>
+            <AdminPanel />
+          </Protected>
+        ), 
+      },
+      { path: 'about', element: <AboutPage /> },
     ],
   },
 ])

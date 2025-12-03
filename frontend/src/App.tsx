@@ -1,245 +1,278 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import './App.css'
-import { useAuth } from './auth/AuthContext'
-import { useState, useEffect, useRef } from 'react'
-import type { Role } from './types'
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from './auth/AuthContext';
+import { useState, useEffect, useRef } from 'react';
+import type { Role } from './types';
+import { ThemeToggle } from './components/ThemeToggle';
+import { Container } from './components/Container';
+import React from 'react';
 
 export default function App() {
-  const { user, logout, hasRole, switchRole } = useAuth()
-  const location = useLocation()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const { user, logout, hasRole, switchRole } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Закрытие меню при клике вне его
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false)
+        setIsMobileMenuOpen(false);
       }
-    }
+    };
 
-    if (isMobileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isMobileMenuOpen])
-  const navLinkStyle = (path: string) => ({
-    padding: '8px 16px',
-    borderRadius: '6px',
-    textDecoration: 'none',
-    color: location.pathname === path ? '#2563eb' : '#374151',
-    backgroundColor: location.pathname === path ? '#545454' : 'transparent',
-    fontWeight: location.pathname === path ? '600' : '400',
-    transition: 'all 0.2s'
-  })
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      background: 'var(--bg-body)'
+    }}>
+      {/* Хедер */}
       <header style={{
-        background: '#fff',
-        borderBottom: '1px solid #545454',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        background: 'var(--bg-header)',
+        borderBottom: '1px solid var(--border-light)',
         position: 'sticky',
         top: 0,
         zIndex: 50
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
-            {/* Логотип и навигация */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-              <Link to="/" style={{ fontSize: '20px', fontWeight: '700', color: '#545454', textDecoration: 'none' }}>
-                Библиотека
-              </Link>
+        <Container size="full">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            height: '64px' 
+          }}>
+            {/* Логотип */}
+            <Link to={user ? '/' : '/login'} style={{ 
+              fontSize: '20px', 
+              fontWeight: '700', 
+              color: 'var(--text-primary)', 
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span style={{ color: 'var(--primary)', fontSize: '24px' }}>📚</span>
+              <span>Библиотека</span>
+            </Link>
 
-
-            </div>
-
-            {/* Правая часть с информацией о пользователе */}
+            {/* Правая часть */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              {!user ? (
-                <>
-                  <Link to="/login" style={navLinkStyle('/login')}>Вход</Link>
-                  <Link to="/register" style={navLinkStyle('/register')}>Регистрация</Link>
-                </>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#6b7280', fontSize: '14px' }}>{user.name}</span>
-                  <select
-                    value={user.role}
-                    onChange={(e) => switchRole(e.target.value as Role)}
-                    style={{
-                      padding: '4px 8px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      background: 'white'
-                    }}
-                  >
-                    <option value="READER">Читатель</option>
-                    <option value="LIBRARIAN">Библиотекарь</option>
-                    <option value="ADMIN">Администратор</option>
-                  </select>
-                </div>
-              )}
-              {/* Гамбургер-меню */}
               {user && (
-                <div ref={menuRef} style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '8px',
-                      borderRadius: '4px',
-                      transition: 'background-color 0.2s'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f3f4f6'
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
-                  >
-                    <div style={{
-                      width: '20px',
-                      height: '2px',
-                      backgroundColor: '#374151',
-                      transition: 'all 0.3s',
-                      transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none'
-                    }} />
-                    <div style={{
-                      width: '20px',
-                      height: '2px',
-                      backgroundColor: '#374151',
-                      transition: 'all 0.3s',
-                      opacity: isMobileMenuOpen ? 0 : 1
-                    }} />
-                    <div style={{
-                      width: '20px',
-                      height: '2px',
-                      backgroundColor: '#374151',
-                      transition: 'all 0.3s',
-                      transform: isMobileMenuOpen ? 'rotate(-45deg) translate(7px, -6px)' : 'none'
-                    }} />
-                  </button>
-
-                  {/* Выпадающее меню */}
-                  {isMobileMenuOpen && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: '0',
-                      marginTop: '8px',
-                      background: '#fff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                      minWidth: '200px',
-                      zIndex: 1000
-                    }}>
-                      <div style={{ padding: '8px 0' }}>
-
-                        <Link
-                          to="/dashboard"
-                          style={{
-                            display: 'block',
-                            padding: '12px 16px',
-                            textDecoration: 'none',
-                            color: location.pathname === '/dashboard' ? '#2563eb' : '#374151',
-                            backgroundColor: location.pathname === '/dashboard' ? '#eff6ff' : 'transparent',
-                            fontWeight: location.pathname === '/dashboard' ? '600' : '400',
-                            transition: 'all 0.2s'
-                          }}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Мои книги
-                        </Link>
-
-                        {hasRole('LIBRARIAN', 'ADMIN') && (
-                          <Link
-                            to="/librarian"
-                            style={{
-                              display: 'block',
-                              padding: '12px 16px',
-                              textDecoration: 'none',
-                              color: location.pathname === '/librarian' ? '#2563eb' : '#374151',
-                              backgroundColor: location.pathname === '/librarian' ? '#eff6ff' : 'transparent',
-                              fontWeight: location.pathname === '/librarian' ? '600' : '400',
-                              transition: 'all 0.2s'
-                            }}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            Управление
-                          </Link>
-                        )}
-
-                        ````````````````````````{hasRole('ADMIN') && (
-                          <Link
-                            to="/admin"
-                            style={{
-                              display: 'block',
-                              padding: '12px 16px',
-                              textDecoration: 'none',
-                              color: location.pathname === '/librarian' ? '#2563eb' : '#374151',
-                              backgroundColor: location.pathname === '/librarian' ? '#eff6ff' : 'transparent',
-                              fontWeight: location.pathname === '/librarian' ? '600' : '400',
-                              transition: 'all 0.2s'
-                            }}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            Панель управления
-                          </Link>
-                        )}
-
-                        <div style={{ borderTop: '1px solid #e5e7eb', margin: '4px 0' }} />
-                        <button
-                          onClick={() => {
-                            logout()
-                            setIsMobileMenuOpen(false)
-                          }}
-                          style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'none',
-                            border: 'none',
-                            color: '#dc2626',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            textAlign: 'center',
-                            transition: 'background-color 0.2s'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = '#fef2f2'
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent'
-                          }}
-                        >
-                          Выйти
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                  {user.name}
+                </span>
               )}
+
+              {/* Селектор роли */}
+              {user && hasRole('ADMIN', 'LIBRARIAN') && (
+                <RoleSelector role={user.role} onChange={switchRole} />
+              )}
+              
+              {/* Мобильное меню (всегда) */}
+              <MobileMenu 
+                ref={menuRef}
+                isOpen={isMobileMenuOpen}
+                onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onLogout={logout}
+                hasRole={hasRole}
+                isAuthenticated={!!user}
+              />
             </div>
           </div>
-        </div>
+        </Container>
       </header>
 
-      <main style={{ flex: 1, background: '#003566' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px' }}>
+      {/* Основной контент */}
+      <main style={{ flex: 1 }}>
+        <Container size="full">
           <Outlet />
-        </div>
+        </Container>
       </main>
     </div>
-  )
+  );
 }
+
+// Компонент выбора роли
+function RoleSelector({ role, onChange }: { role: Role; onChange: (role: Role) => void }) {
+  return (
+    <select
+      value={role}
+      onChange={(e) => onChange(e.target.value as Role)}
+      style={{
+        padding: '6px 10px',
+        border: '1px solid var(--border-medium)',
+        borderRadius: 'var(--border-radius)',
+        fontSize: '12px',
+        background: 'var(--bg-card)',
+        color: 'var(--text-primary)',
+        cursor: 'pointer'
+      }}
+    >
+      <option value="READER">Читатель</option>
+      <option value="LIBRARIAN">Библиотекарь</option>
+      <option value="ADMIN">Админ</option>
+    </select>
+  );
+}
+
+// Компонент мобильного меню
+const MobileMenu = React.forwardRef<HTMLDivElement, {
+  isOpen: boolean;
+  onToggle: () => void;
+  onLogout: () => void;
+  hasRole: (...roles: Role[]) => boolean;
+  isAuthenticated: boolean;
+}>(({ isOpen, onToggle, onLogout, hasRole, isAuthenticated }, ref) => {
+  const location = useLocation();
+
+  const menuItems = isAuthenticated
+    ? [
+        { to: '/dashboard', label: 'Мои книги', icon: '📋' },
+        ...(hasRole('LIBRARIAN', 'ADMIN') 
+          ? [{ to: '/librarian', label: 'Управление', icon: '🛠️' }] 
+          : []),
+        ...(hasRole('ADMIN') 
+          ? [{ to: '/admin', label: 'Админка', icon: '⚙️' }] 
+          : []),
+      ]
+    : [
+        { to: '/login', label: 'Войти', icon: '🔑' },
+        { to: '/register', label: 'Регистрация', icon: '📝' },
+      ];
+
+  return (
+    <div ref={ref} style={{ position: 'relative', paddingRight: '20px' }}>
+      {/* Гамбургер кнопка */}
+      <button
+        onClick={onToggle}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          background: isOpen ? 'var(--color-gray-100)' : 'transparent',
+          border: '1px solid var(--border-light)',
+          borderRadius: 'var(--border-radius)',
+          cursor: 'pointer',
+          padding: '10px',
+          transition: 'all 0.2s'
+        }}
+        aria-label="Меню"
+      >
+        <span style={{ width: '20px', height: '2px', background: 'var(--text-primary)' }} />
+        <span style={{ width: '20px', height: '2px', background: 'var(--text-primary)' }} />
+        <span style={{ width: '20px', height: '2px', background: 'var(--text-primary)' }} />
+      </button>
+
+      {/* Выпадающее меню */}
+      {isOpen && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          right: 0,
+          marginTop: '8px',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-light)',
+          borderRadius: 'var(--border-radius)',
+          boxShadow: 'var(--shadow-lg)',
+          minWidth: '200px',
+          zIndex: 1000
+        }}>
+          <div style={{ padding: '4px 0' }}>
+            {menuItems.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  textDecoration: 'none',
+                  color: location.pathname === item.to 
+                    ? 'var(--primary)' 
+                    : 'var(--text-primary)',
+                  background: location.pathname === item.to 
+                    ? 'var(--color-primary-50)' 
+                    : 'transparent',
+                  fontSize: '14px',
+                  transition: 'all 0.2s'
+                }}
+                onClick={onToggle}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            ))}
+
+            {/* О проекте */}
+            <Link
+              to="/about"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                textDecoration: 'none',
+                color: 'var(--text-primary)',
+                background: 'transparent',
+                fontSize: '14px',
+                transition: 'all 0.2s'
+              }}
+              onClick={onToggle}
+            >
+              <span>ℹ️</span>
+              <span>О проекте</span>
+            </Link>
+
+            <div style={{ borderTop: '1px solid var(--border-light)', margin: '4px 0' }} />
+
+            {/* Тогглер темы */}
+            <div style={{ padding: '8px 16px' }}>
+              <ThemeToggle />
+            </div>
+
+            {/* Выход для авторизованных */}
+            {isAuthenticated && (
+              <>
+                <div style={{ borderTop: '1px solid var(--border-light)', margin: '4px 0' }} />
+                <button
+                  onClick={() => {
+                    onLogout();
+                    onToggle();
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    padding: '10px 16px',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--color-error)',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    textAlign: 'left',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-gray-100)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  <span>👋</span>
+                  <span>Выйти</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
