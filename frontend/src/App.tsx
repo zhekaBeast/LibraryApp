@@ -37,7 +37,8 @@ export default function App() {
 
   return (
     <div style={{ 
-      minHeight: '100vh', 
+      width: '100vw',  // ← viewport width
+    overflowX: 'hidden', // ← на всякий случай
       display: 'flex', 
       flexDirection: 'column',
       background: 'var(--bg-body)'
@@ -157,7 +158,7 @@ const MobileMenu = React.forwardRef<HTMLDivElement, {
       ];
 
   return (
-    <div ref={ref} style={{ position: 'relative', paddingRight: '20px' }}>
+    <div ref={ref} style={{ position: 'relative', paddingRight: '40px' }}>
       {/* Гамбургер кнопка */}
       <button
         onClick={onToggle}

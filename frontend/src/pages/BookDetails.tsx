@@ -80,10 +80,11 @@ export default function BookDetailsPage() {
     try {
       const newCopy = await api.post<Copy>('/api/copies', {
         bookId: book.id,
-        barcode: `BC${Date.now()}`
       });
       setCopies(prev => [...prev, newCopy]);
-      addToast('Экземпляр добавлен', 'success');
+      if (window.confirm(`📖 Экземпляр добавлен успешно!\n\nШтрихкод: ${newCopy.barcode}\n\nНе забудьте:\n1️⃣ Напечатать и приклеить штрихкод на книгу\n2️⃣ Внести номер в инвентарную книгу\n\nОК - понятно`)) {
+        console.log('Персонал подтвердил процедуру добавления книги');
+      }
     } catch {
       addToast('Ошибка добавления', 'error');
     } finally {
@@ -123,7 +124,7 @@ export default function BookDetailsPage() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 20px' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px 20px' }}>
       {/* Навигация */}
       <div style={{ marginBottom: 24 }}>
         <Link

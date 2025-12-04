@@ -12,11 +12,42 @@ router.get('/:bookId', async (req, res) => {
 });
 
 router.post('/', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
-  const { bookId, barcode } = req.body; 
-  const copy = await prisma.bookCopy.create({ data: { bookId, barcode } });
-  res.status(201).json(copy);
+  const { bookId } = req.body; 
+  
+  try {
+    // Получаем книгу чтобы узнать её ISBN
+    const book = await prisma.book.findUnique({
+      where: { id: bookId }
+    });
+    
+    if (!book) {
+      return res.status(404).json({ error: 'Книга не найдена' });
+    }
+    
+    // Считаем сколько копий уже есть у этой книги
+    const existingCopiesCount = await prisma.bookCopy.count({
+      where: { bookId }
+    });
+    
+    // Генерируем штрихкод: ISBN книги + номер копии (001, 002...)
+    const copyNumber = (existingCopiesCount + 1).toString().padStart(3, '0');
+    const barcode = `${book.isbn || '9780000000000'}-${copyNumber}`;
+    
+    // Создаём копию
+    const copy = await prisma.bookCopy.create({ 
+      data: { 
+        bookId, 
+        barcode,
+        status: 'AVAILABLE'
+      } 
+    });
+    
+    res.status(201).json(copy);
+  } catch (error) {
+    console.error('Error creating copy:', error);
+    res.status(500).json({ error: 'Ошибка при создании копии' });
+  }
 });
-
 router.delete('/:copyId', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
   const copyId = Number(req.params.copyId);
   
@@ -78,7 +109,7 @@ module.exports = router;
  *         application/json:
  *           schema:
  *             type: object
- *             required: [bookId, barcode]
+ *             required: [bookId]
  *             properties:
  *               bookId: { type: integer }
  *               barcode: { type: string }
