@@ -11,8 +11,6 @@ export default function BookDetailsPage() {
   const { user, hasRole } = useAuth();
   const { addToast } = useToast();
   
-  console.log('Текущий пользователь:', user);
-  console.log('ID книги:', id);
 
   const [book, setBook] = useState<Book | null>(null);
   const [copies, setCopies] = useState<Copy[]>([]);
@@ -657,7 +655,13 @@ function ReviewsSection({ bookId }: ReviewsSectionProps) {
                 </button>
               </div>
               {userReview.comment && (
-                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <p style={{ 
+                  color: 'var(--text-secondary)', 
+                  lineHeight: 1.5, 
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  margin: 0 
+                }}>
                   {userReview.comment}
                 </p>
               )}
@@ -692,8 +696,9 @@ function ReviewsSection({ bookId }: ReviewsSectionProps) {
                 value={formData.comment}
                 onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
                 placeholder="Ваш отзыв (необязательно)"
-                rows={3}
+                rows={10}
                 style={{
+                  boxSizing: 'border-box',
                   width: '100%',
                   padding: '10px',
                   border: '1px solid var(--border-light)',
@@ -760,37 +765,36 @@ function ReviewsSection({ bookId }: ReviewsSectionProps) {
       {reviews.length > 0 ? (
         <div style={{ maxHeight: 400, overflowY: 'auto' }}>
           {reviews.map((review) => (
+            review.id !== userReview?.id &&(
             <div
               key={review.id}
               style={{
                 padding: '16px 0',
                 borderTop: '1px solid var(--border-light)',
-                ...(review.id === userReview?.id && {
-                  background: 'var(--color-primary-50)',
-                  margin: '0 -16px',
-                  padding: '16px'
-                })
+                
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
                   {review.user.name}
-                  {review.id === userReview?.id && (
-                    <span style={{ marginLeft: 8, fontSize: 12, color: 'var(--primary)', fontWeight: 400 }}>
-                      (Вы)
-                    </span>
-                  )}
                 </div>
                 <div style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
                   {renderStars(review.rating)} • {new Date(review.createdAt).toLocaleDateString()}
                 </div>
               </div>
               {review.comment && (
-                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                <p style={{ 
+                  color: 'var(--text-secondary)', 
+                  lineHeight: 1.5, 
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  margin: 0 
+                }}>
                   {review.comment}
                 </p>
               )}
             </div>
+          )
           ))}
         </div>
       ) : (
