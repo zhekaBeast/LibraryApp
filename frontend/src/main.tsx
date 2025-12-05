@@ -15,6 +15,7 @@ import AdminPanel from './pages/AdminPanel.tsx'
 import AboutPage from './pages/About'
 import './theme.css';
 import './styles/utilities.css';
+import LibrarianPanel from './pages/LibrarianPanel.tsx'
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <AdminPanel />
+          </Protected>
+        ), 
+      },
+      { 
+        path: 'librarian', 
+        element: (
+          <Protected>
+            <LibrarianPanel />
           </Protected>
         ), 
       },

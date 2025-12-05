@@ -41,7 +41,7 @@ export default function CatalogPage() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 20px' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
       {/* Заголовок */}
       <h1 style={{ 
         fontSize: 28, 
@@ -66,12 +66,13 @@ export default function CatalogPage() {
           placeholder="Поиск книг..."
           style={{
             width: '100%',
-            padding: '12px 16px 12px 42px',
+            padding: '12px 42px 12px 42px',
             border: '1px solid var(--border-light)',
             borderRadius: 8,
             fontSize: 16,
             background: 'var(--bg-card)',
-            color: 'var(--text-primary)'
+            color: 'var(--text-primary)', 
+            boxSizing: "border-box"
           }}
         />
         <span style={{

@@ -4,7 +4,7 @@ interface ContainerProps {
     className?: string;
   }
   
-  export function Container({ children, size = 'full', className = '' }: ContainerProps) {
+  export function Container({ children, size = 'sm', className = '' }: ContainerProps) {
     const maxWidths = {
       sm: '640px',
       md: '768px',

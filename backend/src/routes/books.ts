@@ -63,10 +63,35 @@ router.get('/:id', async (req, res) => {
   res.json(book);
 });
 
+// books.ts (новый файл или добавьте к существующему)
 router.post('/', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
-  const { title, author, isbn, genre } = req.body;
-  const book = await prisma.book.create({ data: { title, author, isbn, genre } });
-  res.status(201).json(book);
+  try {
+    const { title, author, isbn, genre, year, description } = req.body;
+    
+    if (!title || !author) {
+      return res.status(400).json({ error: 'Название и автор обязательны' });
+    }
+    
+    const book = await prisma.book.create({
+      data: {
+        title,
+        author,
+        isbn: isbn || null,
+        genre: genre || null,
+        year: year ? parseInt(year) : null,
+        description: description || null
+      }
+    });
+    
+    res.status(201).json(book);
+  } catch (error) {
+    if (error.code === 'P2002' && error.meta?.target?.includes('isbn')) {
+      return res.status(400).json({ error: 'Книга с таким ISBN уже существует' });
+    }
+    
+    console.error('Error creating book:', error);
+    res.status(500).json({ error: 'Ошибка создания книги' });
+  }
 });
 
 router.get('/:id/availability', async (req, res) => {

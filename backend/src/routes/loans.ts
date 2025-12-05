@@ -4,6 +4,83 @@ const prisma = require('../prisma').default || require('../prisma');
 
 const router = Router();
 
+// Также обновляем первый эндпоинт /active:
+router.get('/active', async (req, res) => {
+  try {
+    const { userId } = req.query;
+    
+    console.log('GET /active - userId:', userId);
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'Не указан userId' });
+    }
+    
+    // Проверяем, существует ли пользователь
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(userId as string) }
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: 'Пользователь не найден' });
+    }
+    
+    const activeLoans = await prisma.loan.findMany({
+      where: {
+        userId: parseInt(userId as string),
+        status: 'ACTIVE'
+      },
+      include: {
+        copy: {
+          include: {
+            book: {
+              select: {
+                id: true,
+                title: true,
+                author: true,
+                isbn: true,
+                year: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        issuedAt: 'desc'
+      }
+    });
+    
+    console.log('Found active loans:', activeLoans.length);
+    
+    // Преобразуем ответ в удобный формат
+    const formattedLoans = activeLoans.map(loan => ({
+      id: loan.id,
+      userId: loan.userId,
+      copyId: loan.copyId,
+      bookId: loan.copy.book.id,
+      issuedAt: loan.issuedAt,
+      dueAt: loan.dueAt,
+      returnedAt: loan.returnedAt,
+      status: loan.status,
+      fineCents: loan.fineCents,
+      copy: {
+        id: loan.copy.id,
+        barcode: loan.copy.barcode,
+        status: loan.copy.status
+      },
+      book: loan.copy.book
+    }));
+    
+    res.json(formattedLoans);
+  } catch (error) {
+    console.error('Error fetching active loans:', error);
+    res.status(500).json({ 
+      error: 'Ошибка сервера',
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+
 router.get('/', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (_req, res) => {
   const loans = await prisma.loan.findMany({ 
     include: { 
@@ -58,7 +135,7 @@ router.post('/issue', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), 
   res.status(201).json(loan);
 });
 
-router.post('/:loanId/return', auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
+router.post('/:loanId/return', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async (req, res) => {
   const loanId = Number(req.params.loanId);
   const { finePaid } = req.body;
   
@@ -119,6 +196,37 @@ router.post('/:loanId/return', auth.requireRole('LIBRARIAN', 'ADMIN'), async (re
 
 module.exports = router;
 
+
+/**
+ * @swagger
+ * /api/loans/active:
+ *   get:
+ *     summary: Получить активные займы пользователя
+ *     description: Возвращает список активных займов для указанного пользователя
+ *     tags: [loans]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID пользователя
+ *     responses:
+ *       200:
+ *         description: Список активных займов пользователя
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Loan'
+ *       400:
+ *         description: Не указан userId
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
 /**
  * @openapi
  * /api/loans:

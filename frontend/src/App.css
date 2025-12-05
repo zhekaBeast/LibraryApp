@@ -38,3 +38,13 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Стили для IssueWizard */
+.issue-wizard-button-hover:hover {
+  background-color: var(--gray-200) !important;
+}
+
+.issue-wizard-card-hover:hover {
+  border-color: var(--primary) !important;
+  background-color: var(--gray-50) !important;
+}

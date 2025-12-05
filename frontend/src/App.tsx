@@ -37,8 +37,6 @@ export default function App() {
 
   return (
     <div style={{ 
-      width: '100vw',  // ← viewport width
-    overflowX: 'hidden', // ← на всякий случай
       display: 'flex', 
       flexDirection: 'column',
       background: 'var(--bg-body)'
