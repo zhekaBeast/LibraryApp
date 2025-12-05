@@ -111,7 +111,7 @@ function ActiveLoanCard({ loan }: { loan: Loan }) {
           </p>
           
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <div style={{
+            {/* <div style={{
               padding: '4px 10px',
               background: getStatusColor(),
               color: 'white',
@@ -120,7 +120,7 @@ function ActiveLoanCard({ loan }: { loan: Loan }) {
               fontWeight: 500
             }}>
               {getStatusText()}
-            </div>
+            </div> */}
             
             <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
               До {dueDate.toLocaleDateString('ru-RU')}
@@ -264,7 +264,7 @@ function SubscriptionCard({
 
 // --- Компонент карточки истории ---
 function HistoryCard({ loan }: { loan: Loan }) {
-  const borrowedDate = new Date(loan.borrowedAt);
+  const borrowedDate = new Date(loan.issuedAt);
   const returnedDate = loan.returnedAt ? new Date(loan.returnedAt) : null;
   const daysHeld = returnedDate 
     ? Math.ceil((returnedDate.getTime() - borrowedDate.getTime()) / (1000 * 60 * 60 * 24))
@@ -302,12 +302,12 @@ function HistoryCard({ loan }: { loan: Loan }) {
             <span>📅 {borrowedDate.toLocaleDateString('ru-RU')}</span>
             <span>→</span>
             <span>📅 {returnedDate?.toLocaleDateString('ru-RU') || 'Не возвращена'}</span>
-            <span>•</span>
-            <span>{daysHeld} дней</span>
+            {/* <span>•</span>
+            <span>{daysHeld} дней</span> */}
           </div>
         </div>
         
-        {loan.fineCents && loan.fineCents > 0 && (
+        {(loan.fineCents !== null && loan.fineCents !== undefined && loan.fineCents > 0) && (
           <div style={{ 
             paddingLeft: 12,
             borderLeft: '1px solid var(--border-light)'
@@ -360,7 +360,7 @@ function EmptyState({
 // --- Основной компонент ---
 const TABS: Tab[] = [
   { id: 'active', label: 'Активные', icon: '📚' },
-  { id: 'waiting', label: 'В ожидании', icon: '🔔' },
+  { id: 'waiting', label: 'Отслеживаются', icon: '🔔' },
   { id: 'history', label: 'История', icon: '📅' }
 ];
 

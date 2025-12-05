@@ -11,7 +11,7 @@ type LibrarianTab = 'issue' | 'return' | 'manage' | 'stats'  | 'users';
 export default function LibrarianPanel() {
   const { hasRole } = useAuth();
   const { addToast } = useToast();
-  const [activeTab, setActiveTab] = useState<LibrarianTab>('issue');
+  const [activeTab, setActiveTab] = useState<LibrarianTab>('users');
   
   // Проверяем права
   if (!hasRole('LIBRARIAN', 'ADMIN')) {
@@ -67,6 +67,12 @@ export default function LibrarianPanel() {
             marginBottom: 24
           }}>
             <TabButton 
+              active={activeTab === 'users'} 
+              onClick={() => setActiveTab('users')}
+              icon="👤"
+              label="Пользователи"
+            />
+            <TabButton 
               active={activeTab === 'issue'} 
               onClick={() => setActiveTab('issue')}
               icon="📤"
@@ -90,12 +96,7 @@ export default function LibrarianPanel() {
               icon="📊"
               label="Статистика"
             />
-            <TabButton 
-  active={activeTab === 'users'} 
-  onClick={() => setActiveTab('users')}
-  icon="👤"
-  label="Пользователи"
-/>
+            
           </div>
 
           {/* Контент табов */}

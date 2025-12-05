@@ -70,6 +70,7 @@ export default function BookDetailsPage() {
       throw err;
     } finally {
       setSubscribing(false);
+      setIsSubscribed(!isSubscribed)
     }
   };
 
