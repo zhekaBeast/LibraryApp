@@ -163,14 +163,14 @@ export default function BookDetailsPage() {
       </div>
 
       {/* Управление для библиотекарей */}
-      {hasRole('LIBRARIAN', 'ADMIN') && (
+      {/* {hasRole('LIBRARIAN', 'ADMIN') && (
         <CopiesManagement 
           copies={copies}
           addingCopy={addingCopy}
           onAddCopy={handleAddCopy}
           onDeleteCopy={handleDeleteCopy}
         />
-      )}
+      )} */}
       <ReviewsSection bookId={book.id} />
       {/* TODO: Добавить сюда компонент для отзывов */}
       {/* TODO: Добавить сюда компонент для редактирования книги (для админов) */}

@@ -45,7 +45,7 @@ model Book {
   author                    String
   isbn                      String?                    @unique
   genre                     String?
-  description String?
+  description               String?
   year                      Int?
   createdAt                 DateTime                   @default(now())
   copies                    BookCopy[]
@@ -56,7 +56,7 @@ model Book {
 
 model BookCopy {
   id      Int        @id @default(autoincrement())
-  book    Book       @relation(fields: [bookId], references: [id])
+  book    Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId  Int
   barcode String     @unique
   status  CopyStatus @default(AVAILABLE)
@@ -65,9 +65,9 @@ model BookCopy {
 
 model Loan {
   id         Int        @id @default(autoincrement())
-  user       User       @relation(fields: [userId], references: [id])
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
-  copy       BookCopy   @relation(fields: [copyId], references: [id])
+  copy       BookCopy   @relation(fields: [copyId], references: [id], onDelete: Cascade)
   copyId     Int
   issuedAt   DateTime   @default(now())
   dueAt      DateTime
@@ -78,9 +78,9 @@ model Loan {
 
 model Reservation {
   id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  book      Book      @relation(fields: [bookId], references: [id])
+  book      Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId    Int
   status    String    @default("active")
   createdAt DateTime  @default(now())
@@ -89,9 +89,9 @@ model Reservation {
 
 model Review {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  book      Book     @relation(fields: [bookId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId    Int
   rating    Int
   comment   String?
@@ -102,7 +102,7 @@ model Review {
 
 model Notification {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   title     String
   message   String
@@ -118,9 +118,9 @@ model SystemConfig {
 
 model AvailabilitySubscription {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  book      Book     @relation(fields: [bookId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId    Int
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
