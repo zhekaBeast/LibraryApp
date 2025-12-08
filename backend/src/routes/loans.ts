@@ -9,7 +9,6 @@ router.get('/active', async (req, res) => {
   try {
     const { userId } = req.query;
     
-    console.log('GET /active - userId:', userId);
     
     if (!userId) {
       return res.status(400).json({ error: 'Не указан userId' });
@@ -49,7 +48,6 @@ router.get('/active', async (req, res) => {
       }
     });
     
-    console.log('Found active loans:', activeLoans.length);
     
     // Преобразуем ответ в удобный формат
     const formattedLoans = activeLoans.map(loan => ({
@@ -141,7 +139,11 @@ router.post('/:loanId/return', auth.requireAuth, auth.requireRole('LIBRARIAN', '
   
   const loan = await prisma.loan.findUnique({ 
     where: { id: loanId },
-    include: { copy: true }
+    include: {  copy: {
+      include: {
+        book: true // Вот этого не хватало
+      }
+    } }
   });
   
   if (!loan) return res.status(404).json({ error: 'Loan not found' });
@@ -183,11 +185,7 @@ router.post('/:loanId/return', auth.requireAuth, auth.requireRole('LIBRARIAN', '
             message: `Книга "${loan.copy.book.title}" теперь доступна для выдачи`
           }
         })
-      ),
-      prisma.availabilitySubscription.updateMany({
-        where: { bookId: loan.copy.bookId, isActive: true },
-        data: { isActive: false }
-      })
+      )
     ]);
   }
   

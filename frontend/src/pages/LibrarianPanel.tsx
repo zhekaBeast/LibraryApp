@@ -5,6 +5,7 @@ import { IssueWizard } from './IssueWizard';
 import { ReturnWizard } from './ReturnWizard';
 import { BookManagement } from './BookManagement';
 import { UserProfile } from './UserProfile';
+import { LibrarianDashboard } from './LibrarianDashboard';
 
 type LibrarianTab = 'issue' | 'return' | 'manage' | 'stats'  | 'users';
 
@@ -105,7 +106,7 @@ export default function LibrarianPanel() {
             {activeTab === 'return' && <ReturnWizard />}
             {activeTab === 'manage' && <BookManagement />}
             {activeTab === 'users' && <UserProfile />}
-            {/* {activeTab === 'stats' && <StatisticsPanel />} */}
+            {activeTab === 'stats' && <LibrarianDashboard />}
           </div>
         </div>
 
@@ -155,23 +156,23 @@ function TabButton({
   );
 }
 
-// Заглушка для статистики
-function StatisticsPanel() {
-  return (
-    <div style={{ 
-      padding: 40, 
-      textAlign: 'center',
-      background: 'var(--bg-card)',
-      borderRadius: 12,
-      border: '1px solid var(--border-light)'
-    }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
-      <h3 style={{ fontSize: 18, color: 'var(--text-primary)', marginBottom: 8 }}>
-        Статистика в разработке
-      </h3>
-      <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
-        Здесь будут графики и аналитика по работе библиотеки
-      </p>
-    </div>
-  );
-}
+// // Заглушка для статистики
+// function StatisticsPanel() {
+//   return (
+//     <div style={{ 
+//       padding: 40, 
+//       textAlign: 'center',
+//       background: 'var(--bg-card)',
+//       borderRadius: 12,
+//       border: '1px solid var(--border-light)'
+//     }}>
+//       <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
+//       <h3 style={{ fontSize: 18, color: 'var(--text-primary)', marginBottom: 8 }}>
+//         Статистика в разработке
+//       </h3>
+//       <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+//         Здесь будут графики и аналитика по работе библиотеки
+//       </p>
+//     </div>
+//   );
+// }

@@ -114,7 +114,7 @@ export function UserProfile() {
                 onClick={() => handleSelectUser(user)}
                 style={{
                   padding: 12,
-                  background: selectedUser?.id === user.id ? 'var(--color-primary-50)' : 'var(--bg-body)',
+                  background: selectedUser?.id === user.id ? 'var(--ui-secondary-bg)' : 'var(--bg-body)',
                   border: `1px solid ${selectedUser?.id === user.id ? 'var(--primary)' : 'var(--border-light)'}`,
                   borderRadius: 6,
                   marginBottom: 8,

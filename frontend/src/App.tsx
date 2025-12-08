@@ -5,6 +5,7 @@ import type { Role } from './types';
 import { ThemeToggle } from './components/ThemeToggle';
 import { Container } from './components/Container';
 import React from 'react';
+import NotificationBell from './pages/NotificationBell';
 
 export default function App() {
   const { user, logout, hasRole, switchRole } = useAuth();
@@ -82,7 +83,7 @@ export default function App() {
               {user && 
                 <RoleSelector role={user.role} onChange={switchRole} />
               }
-              
+              {<NotificationBell />}
               {/* Мобильное меню (всегда) */}
               <MobileMenu 
                 ref={menuRef}

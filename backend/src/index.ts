@@ -11,6 +11,9 @@ const swaggerSpec = require('./swagger').swaggerSpec;
 const notificationsRouter = require('./routes/notifications').default || require('./routes/notifications'); 
 const reviewsRouter = require('./routes/reviews').default || require('./routes/reviews'); 
 const configRouter = require('./routes/config').default || require('./routes/config');
+const dashboardRouter = require('./routes/dashboard').default || require('./routes/dashboard');
+const adminRouter = require('./routes/admin').default || require('./routes/admin');
+
 
 
 
@@ -27,6 +30,8 @@ app.use('/api/copies', copiesRouter);
 app.use('/api/notifications', notificationsRouter); 
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/config', configRouter);
+app.use('/api/dashboard', dashboardRouter);
+app.use('/api/admin', adminRouter);
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;
