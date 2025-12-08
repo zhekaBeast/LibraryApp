@@ -8,7 +8,7 @@ const router = Router();
 router.use(requireAuth);
 
 router.get('/', async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = (req ).auth;
   const subscriptions = await prisma.availabilitySubscription.findMany({
     where: { userId: auth.userId, isActive: true },
     include: { book: true },
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = (req ).auth;
   const { bookId } = req.body;
 
   try {
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
 });
 
 router.delete('/:bookId', async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = (req ).auth ;
   const bookId = parseInt(req.params.bookId);
 
   await prisma.availabilitySubscription.updateMany({
@@ -63,7 +63,7 @@ router.delete('/:bookId', async (req, res) => {
 });
 
 router.get('/check/:bookId', async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = (req).auth;
   const bookId = parseInt(req.params.bookId);
   
   const subscription = await prisma.availabilitySubscription.findFirst({

@@ -17,7 +17,7 @@ router.get('/book/:bookId', async (req, res) => {
 
 // Получить отзывы пользователя
 router.get('/my', requireAuth, async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = req.auth;
   const reviews = await prisma.review.findMany({
     where: { userId: auth.userId },
     include: { book: true },
@@ -28,7 +28,7 @@ router.get('/my', requireAuth, async (req, res) => {
 
 // Создать/обновить отзыв
 router.post('/', requireAuth, async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = req.auth;
   const { bookId, rating, comment } = req.body;
   
   // Валидация рейтинга
@@ -52,7 +52,7 @@ router.post('/', requireAuth, async (req, res) => {
 
 // Удалить отзыв
 router.delete('/:id', requireAuth, async (req, res) => {
-  const auth = (req as any).auth as { userId: number };
+  const auth = req.auth;
   const id = parseInt(req.params.id);
   
   const review = await prisma.review.findFirst({

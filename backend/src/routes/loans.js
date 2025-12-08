@@ -1,6 +1,6 @@
-import auth = require("../middleware/auth");
+const auth = require("../middleware/auth");
 const { Router } = require('express');
-const prisma = require('../prisma').default || require('../prisma');
+const prisma = require('../prisma');
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.get('/active', async (req, res) => {
     
     // Проверяем, существует ли пользователь
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(userId as string) }
+      where: { id: parseInt(userId) }
     });
     
     if (!user) {
@@ -25,7 +25,7 @@ router.get('/active', async (req, res) => {
     
     const activeLoans = await prisma.loan.findMany({
       where: {
-        userId: parseInt(userId as string),
+        userId: parseInt(userId),
         status: 'ACTIVE'
       },
       include: {
@@ -90,7 +90,7 @@ router.get('/', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), async 
 });
 
 router.get('/my', auth.requireAuth, async (req, res) => {
-  const auth = (req as any).auth;
+  const auth = (req).auth;
   const loans = await prisma.loan.findMany({ 
     where: { userId: auth.userId },
     include: { copy: { include: { book: true } } }

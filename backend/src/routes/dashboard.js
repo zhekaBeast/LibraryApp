@@ -1,5 +1,5 @@
 // backend/routes/dashboard.ts
-import { Router } from 'express';
+const { Router } = require('express');
 const prisma = require('../prisma');
 
 const router = Router();
@@ -76,7 +76,7 @@ router.get('/stats', async (req, res) => {
 
     // Получаем детали книг для популярных копий
     const popularBooks = await Promise.all(
-      popularBooksRaw.map(async (item: any) => {
+      popularBooksRaw.map(async (item) => {
         const copy = await prisma.bookCopy.findUnique({
           where: { id: item.copyId },
           include: { book: true }
@@ -108,7 +108,7 @@ router.get('/stats', async (req, res) => {
 
     // Получаем детали пользователей
     const activeUsers = await Promise.all(
-      activeUsersRaw.map(async (item: any) => {
+      activeUsersRaw.map(async (item) => {
         const user = await prisma.user.findUnique({
           where: { id: item.userId },
           select: { id: true, name: true, email: true, role: true }
@@ -147,7 +147,7 @@ router.get('/activity', async (req, res) => {
     const { range = 'month' } = req.query;
     
     // Получаем все займы за период
-    let whereCondition: any = {};
+    let whereCondition = {};
     
     switch (range) {
       case 'week':
@@ -180,10 +180,10 @@ router.get('/activity', async (req, res) => {
     });
 
     // Группируем по дням/месяцам
-    const groupedData: Record<string, { count: number; active: number; returned: number }> = {};
+    const groupedData = {};
     
     loans.forEach(loan => {
-      let key: string;
+      let key;
       
       switch (range) {
         case 'week':

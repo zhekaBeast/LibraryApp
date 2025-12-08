@@ -8,7 +8,7 @@ const swaggerSpec = swaggerJsdoc({
       title: 'Library API',
       version: '1.0.0',
     },
-    servers: [{ url: 'http://localhost:4000' }],
+    servers: [{ url: 'http://localhost:5000' }],
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -20,7 +20,7 @@ const swaggerSpec = swaggerJsdoc({
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: [path.join(__dirname, 'routes', '*.ts')],
+  apis: [path.join(__dirname, 'routes', '*.js')],
 });
 
 module.exports = { swaggerSpec };

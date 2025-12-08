@@ -76,16 +76,6 @@ model Loan {
   status     LoanStatus @default(ACTIVE)
 }
 
-model Reservation {
-  id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  book      Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  bookId    Int
-  status    String    @default("active")
-  createdAt DateTime  @default(now())
-  expiresAt DateTime?
-}
 
 model Review {
   id        Int      @id @default(autoincrement())

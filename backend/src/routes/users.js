@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const prisma = require('../prisma').default || require('../prisma');
-import auth = require("../middleware/auth");
+const auth = require("../middleware/auth");
 const router = Router();
 
 router.get('/', async (_req, res) => {
@@ -23,7 +23,7 @@ router.get('/search', auth.requireAuth, auth.requireRole('LIBRARIAN', 'ADMIN'), 
 });
 
 router.get('/:id/loans', async (req, res) => {
-  const auth = (req as any).auth;
+  const auth = req.auth;
   const userId = parseInt(req.params.id);
   
   // Проверяем права: либо запрашиваем свои данные, либо админ/библиотекарь

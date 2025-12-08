@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const prisma = require('../prisma').default || require('../prisma');
-import { requireRole, requireAuth } from '../middleware/auth';
+const { requireRole, requireAuth } = require('../middleware/auth');
 
 const router = Router();
 
