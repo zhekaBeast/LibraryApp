@@ -47,7 +47,7 @@ export class ApiClient {
 					// Clear token and redirect to login
 					localStorage.removeItem('token');
 					localStorage.removeItem('user');
-					window.location.href = '/login';
+					//window.location.href = '/login';
 				}
 				
 				throw error;

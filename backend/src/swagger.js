@@ -8,7 +8,7 @@ const swaggerSpec = swaggerJsdoc({
       title: 'Library API',
       version: '1.0.0',
     },
-    servers: [{ url: 'http://localhost:5000' }],
+    servers: [{ url: 'http://localhost:4000' }],
     components: {
       securitySchemes: {
         bearerAuth: {

@@ -14,7 +14,6 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
-
   // Загрузка уведомлений
   const loadNotifications = async () => {
     try {
@@ -52,6 +51,18 @@ export default function NotificationBell() {
 
   // Загружаем уведомления при монтировании
   useEffect(() => {
+    const token = localStorage.getItem('token');
+  
+    // Проверяем что токен валидный
+    if (!token || token === "undefined" || token === "null") {
+      return;
+    }
+    
+    // Проверяем что токен выглядит как JWT (минимум 2 точки)
+    if (token.split('.').length !== 3) {
+      return;
+    }
+
     loadNotifications();
   }, []);
 

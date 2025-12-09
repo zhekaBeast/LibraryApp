@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -28,15 +29,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ 
-      minHeight: '70vh', 
-      display: 'flex', 
-      alignItems: 'center', 
+    <div style={{
+      minHeight: '70vh',
+      display: 'flex',
+      alignItems: 'center',
       justifyContent: 'center',
       padding: 'var(--spacing-xl) var(--spacing)'
     }}>
-      <div style={{ 
-        width: '100%', 
+      <div style={{
+        width: '100%',
         maxWidth: '400px',
         margin: '0 auto'
       }}>
@@ -64,16 +65,16 @@ export default function LoginPage() {
             }}>
               📚
             </div>
-            <h1 style={{ 
-              fontSize: '28px', 
+            <h1 style={{
+              fontSize: '28px',
               fontWeight: '700',
               color: 'var(--text-primary)',
               marginBottom: 'var(--spacing-sm)'
             }}>
               Библиотека
             </h1>
-            <p style={{ 
-              color: 'var(--text-secondary)', 
+            <p style={{
+              color: 'var(--text-secondary)',
               fontSize: '16px'
             }}>
               Вход в систему
@@ -107,7 +108,8 @@ export default function LoginPage() {
                     fontSize: '16px',
                     background: 'var(--bg-body)',
                     color: 'var(--text-primary)',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    boxSizing: 'border-box'
                   }}
                 />
               </div>
@@ -123,7 +125,7 @@ export default function LoginPage() {
                   Пароль
                 </label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -136,10 +138,32 @@ export default function LoginPage() {
                     fontSize: '16px',
                     background: 'var(--bg-body)',
                     color: 'var(--text-primary)',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    marginBottom: '4px',
+                    boxSizing: 'border-box'
                   }}
                 />
+                <button
+                  type="button"
+                  onMouseDown={() => setShowPassword(true)}
+                  onMouseUp={() => setShowPassword(false)}
+                  onMouseLeave={() => setShowPassword(false)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--primary)',
+                    fontSize: '12px',
+                    padding: '0',
+                    textAlign: 'left',
+                    fontWeight: '500'
+                  }}
+                >
+                  Показать пароль
+                </button>
               </div>
+
+
 
               <button
                 type="submit"
@@ -168,20 +192,21 @@ export default function LoginPage() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
+
                 {loading ? 'Вход...' : 'Войти'}
               </button>
             </div>
           </form>
 
           {/* Ссылка на регистрацию */}
-          <div style={{ 
-            marginTop: 'var(--spacing-xl)', 
-            paddingTop: 'var(--spacing-lg)', 
+          <div style={{
+            marginTop: 'var(--spacing-xl)',
+            paddingTop: 'var(--spacing-lg)',
             borderTop: '1px solid var(--border-light)',
             textAlign: 'center'
           }}>
-            <p style={{ 
-              color: 'var(--text-secondary)', 
+            <p style={{
+              color: 'var(--text-secondary)',
               fontSize: '14px',
               marginBottom: 'var(--spacing-sm)'
             }}>
@@ -215,8 +240,8 @@ export default function LoginPage() {
         </div>
 
         {/* Подсказка */}
-        <div style={{ 
-          marginTop: 'var(--spacing-xl)', 
+        <div style={{
+          marginTop: 'var(--spacing-xl)',
           textAlign: 'center',
           color: 'var(--text-secondary)',
           fontSize: '12px'
