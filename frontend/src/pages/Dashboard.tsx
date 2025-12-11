@@ -154,7 +154,7 @@ function ActiveLoanCard({ loan }: { loan: Loan }) {
         fontSize: 12,
         color: 'var(--text-secondary)'
       }}>
-        📅 Взята {new Date(loan.borrowedAt).toLocaleDateString('ru-RU')}
+        📅 Взята {new Date(loan.issuedAt).toLocaleDateString('ru-RU')}
       </div>
     </div>
   );

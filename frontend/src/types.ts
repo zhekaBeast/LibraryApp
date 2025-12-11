@@ -58,7 +58,7 @@ export type Loan = {
 	id: number;
 	userId: number;
 	copyId: number;
-	bookId: number; // Добавь это поле
+	bookId: number; 
 	issuedAt: string;
 	dueAt: string;
 	returnedAt: string | null;

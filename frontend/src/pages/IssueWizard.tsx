@@ -655,15 +655,9 @@ function BookSearchStep({
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ fontWeight: 500, color: 'var(--text-primary)', fontSize: 14 }}>
-                        Экземпляр #{copy.id}
+                        Экземпляр #{copy.barcode}
                       </div>
-                      <div style={{ 
-                        fontSize: 13, 
-                        color: 'var(--text-secondary)',
-                        fontFamily: 'monospace, Consolas, Monaco, "Courier New", monospace'
-                      }}>
-                        {copy.barcode}
-                      </div>
+                      
                     </div>
                   </div>
                 ))}

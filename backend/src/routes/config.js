@@ -4,7 +4,9 @@ const { requireRole, requireAuth } = require('../middleware/auth');
 
 const router = Router();
 
-router.get('/', requireAuth, requireRole('ADMIN'), async (_req, res) => {
+// Конфиг может читать любой авторизованный пользователь (штрафы, срок выдачи),
+// а изменять — только администратор.
+router.get('/', requireAuth, async (_req, res) => {
   const config = await prisma.systemConfig.findFirst();
   res.json(config || { loanPeriodDays: 14, finePerDay: 10 });
 });

@@ -80,9 +80,9 @@ export default function App() {
               )}
 
               {/* Селектор роли */}
-              {user && user.role == "ADMIN" && 
+              {/* {user && user.role == "ADMIN" && 
                 <RoleSelector role={user.role} onChange={switchRole} />
-              }
+              } */}
               {user && <NotificationBell />}
               {/* Мобильное меню (всегда) */}
               <MobileMenu 

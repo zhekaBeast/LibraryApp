@@ -33,7 +33,6 @@ model User {
   role                      Role                       @default(READER)
   createdAt                 DateTime                   @default(now())
   loans                     Loan[]
-  reservations              Reservation[]
   reviews                   Review[]
   notifications             Notification[]
   availabilitySubscriptions AvailabilitySubscription[]
@@ -49,7 +48,6 @@ model Book {
   year                      Int?
   createdAt                 DateTime                   @default(now())
   copies                    BookCopy[]
-  reservations              Reservation[]
   reviews                   Review[]
   availabilitySubscriptions AvailabilitySubscription[]
 }

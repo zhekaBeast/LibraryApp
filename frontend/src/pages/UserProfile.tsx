@@ -225,7 +225,7 @@ export function UserProfile() {
             📋 Активные займы
           </h3>
           
-          {userLoans.length === 0 ? (
+          { userLoans.length === 0  && (
             <div style={{ 
               textAlign: 'center', 
               padding: 24, 
@@ -238,8 +238,7 @@ export function UserProfile() {
               <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
               <div>У пользователя нет активных займов</div>
             </div>
-          ) : (
-            <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+                      )}            <div style={{ maxHeight: 300, overflowY: 'auto' }}>
               {userLoans.map(loan => {
                 const overdue = new Date(loan.dueAt) < new Date();
                 
@@ -288,7 +287,7 @@ export function UserProfile() {
                       </div>
                     </div>
                     
-                    {loan.fineCents && loan.fineCents > 0 && (
+                    {false && (
                       <div style={{
                         marginTop: 8,
                         padding: 8,
@@ -298,14 +297,13 @@ export function UserProfile() {
                         color: 'var(--color-error)',
                         fontWeight: 500
                       }}>
-                        ⚠️ Штраф: {(loan.fineCents / 100).toFixed(2)} ₽
+                        {/* ⚠️ Штраф: {(loan.fineCents / 100).toFixed(2)} ₽ */}
                       </div>
                     )}
                   </div>
                 );
               })}
             </div>
-          )}
           
           {/* Блок статуса для выдачи книг */}
           <div style={{ marginTop: 24, padding: 16, background: 'var(--gray-50)', borderRadius: 8 }}>

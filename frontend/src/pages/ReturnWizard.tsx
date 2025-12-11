@@ -13,6 +13,14 @@ export function ReturnWizard() {
   const [userLoans, setUserLoans] = useState<Loan[]>([]);
   const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [finePerDayCents, setFinePerDayCents] = useState<number>(10);
+
+  console.log('[ReturnWizard] render', {
+    step,
+    selectedUserId: selectedUser?.id,
+    selectedLoanId: selectedLoan?.id,
+    finePerDayCents,
+  });
 
   // Автоматическая навигация
   useEffect(() => {
@@ -40,6 +48,23 @@ export function ReturnWizard() {
 
     loadUserLoans();
   }, [selectedUser]);
+
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const config = await api.get<{ loanPeriodDays: number; finePerDay: number }>('/api/config');
+        console.log('[ReturnWizard] /api/config response', config);
+        if (typeof config?.finePerDay === 'number') {
+          setFinePerDayCents(config.finePerDay);
+          console.log('[ReturnWizard] finePerDayCents set to', config.finePerDay);
+        }
+      } catch (err) {
+        console.warn('[ReturnWizard] failed to load /api/config, using default fine 10', err);
+      }
+    };
+
+    loadConfig();
+  }, []);
 
   // Обработка возврата
   const handleReturn = async () => {
@@ -174,6 +199,7 @@ export function ReturnWizard() {
             onBack={() => setSelectedLoan(null)}
             onConfirm={handleReturn}
             submitting={submitting}
+            finePerDayCents={finePerDayCents}
           />
         )}
       </div>
@@ -539,13 +565,15 @@ function ConfirmReturnStep({
   loan,
   onBack,
   onConfirm,
-  submitting
+  submitting,
+  finePerDayCents
 }: {
   user: User | null;
   loan: Loan;
   onBack: () => void;
   onConfirm: () => void;
   submitting: boolean;
+  finePerDayCents: number;
 }) {
 
 
@@ -566,8 +594,22 @@ function ConfirmReturnStep({
   };
 
   const overdueDays = isOverdue(loan.dueAt) ? calculateDaysOverdue(loan.dueAt) : 0;
+  // Берём штраф из настроек (SystemConfig.finePerDay), либо 10 коп/день по умолчанию
+  const perDay = finePerDayCents || 10;
+  const estimatedFineCents = overdueDays * perDay;
+  const estimatedFineRub = estimatedFineCents / 100;
 
-  
+  console.log('[ConfirmReturnStep] debug', {
+    loanId: loan.id,
+    loanDueAt: loan.dueAt,
+    now: new Date().toISOString(),
+    isOverdue: isOverdue(loan.dueAt),
+    overdueDays,
+    finePerDayCents,
+    perDay,
+    estimatedFineCents,
+    estimatedFineRub,
+  });
 
   return (
     <div>
@@ -685,9 +727,14 @@ function ConfirmReturnStep({
                 <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                   Просрочено на {overdueDays} {overdueDays === 1 ? 'день' : overdueDays < 5 ? 'дня' : 'дней'}
                 </div>
+                {(
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>
+                    Штраф: {estimatedFineRub.toFixed(2)} ₽
+                  </div>
+                )}
+                </div>
               </div>
             </div>
-          </div>
         )}
       </div>
 
