@@ -8,7 +8,6 @@ import type { Book, Copy, Review, ReviewsSectionProps, SubscriptionCheckResponse
 // --- Основной компонент ---
 export default function BookDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const { user, hasRole } = useAuth();
   const { addToast } = useToast();
   
 
@@ -16,7 +15,6 @@ export default function BookDetailsPage() {
   const [copies, setCopies] = useState<Copy[]>([]);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(false);
-  const [addingCopy, setAddingCopy] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   // Загрузка данных
@@ -74,36 +72,6 @@ export default function BookDetailsPage() {
     }
   };
 
-  // Добавление экземпляра
-  const handleAddCopy = async () => {
-    if (!book) return;
-    setAddingCopy(true);
-    try {
-      const newCopy = await api.post<Copy>('/api/copies', {
-        bookId: book.id,
-      });
-      setCopies(prev => [...prev, newCopy]);
-      if (window.confirm(`📖 Экземпляр добавлен успешно!\n\nШтрихкод: ${newCopy.barcode}\n\nНе забудьте:\n1️⃣ Напечатать и приклеить штрихкод на книгу\n2️⃣ Внести номер в инвентарную книгу\n\nОК - понятно`)) {
-        console.log('Персонал подтвердил процедуру добавления книги');
-      }
-    } catch {
-      addToast('Ошибка добавления', 'error');
-    } finally {
-      setAddingCopy(false);
-    }
-  };
-
-  // Удаление экземпляра
-  const handleDeleteCopy = async (copyId: number) => {
-    try {
-      await api.delete(`/api/copies/${copyId}`);
-      setCopies(prev => prev.filter(c => c.id !== copyId));
-      addToast('Экземпляр удален', 'success');
-    } catch {
-      addToast('Нельзя удалить выданную копию', 'error');
-    }
-  };
-
   // Состояния загрузки
   if (loading) {
     return (
@@ -156,22 +124,13 @@ export default function BookDetailsPage() {
         <BookHeader book={book} isAvailable={isAvailable} />
         <BookDetails book={book} />
         <SubscriptionButton 
-          book={book}
           isSubscribed={isSubscribed}
           subscribing={subscribing}
           onSubscribe={handleSubscribe}
         />
       </div>
 
-      {/* Управление для библиотекарей */}
-      {/* {hasRole('LIBRARIAN', 'ADMIN') && (
-        <CopiesManagement 
-          copies={copies}
-          addingCopy={addingCopy}
-          onAddCopy={handleAddCopy}
-          onDeleteCopy={handleDeleteCopy}
-        />
-      )} */}
+      {/* Управление экземплярами вынесено в административные разделы */}
       <ReviewsSection bookId={book.id} />
       {/* TODO: Добавить сюда компонент для отзывов */}
       {/* TODO: Добавить сюда компонент для редактирования книги (для админов) */}
@@ -263,12 +222,10 @@ function BookDetails({ book }: { book: Book }) {
 }
 
 function SubscriptionButton({ 
-  book,
   subscribing, 
   onSubscribe,
   isSubscribed: initialSubscribed
 }: { 
-  book: Book;
   subscribing: boolean;
   onSubscribe: () => void;
   isSubscribed: boolean;
@@ -339,110 +296,6 @@ function SubscriptionButton({
     </div>
   );
 }
-
-function CopyItem({ 
-  copy, 
-  onDelete 
-}: { 
-  copy: Copy; 
-  onDelete: (id: number) => void;
-}) {
-  return (
-    <div
-      key={copy.id}
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '12px 16px',
-        background: 'var(--bg-body)',
-        border: '1px solid var(--border-light)',
-        borderRadius: 8,
-        marginBottom: 8
-      }}
-    >
-      <div>
-        <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
-          Экземпляр #{copy.id}
-        </div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-          {copy.barcode} • {copy.status}
-        </div>
-      </div>
-      {copy.status === 'AVAILABLE' && (
-        <button
-          onClick={() => onDelete(copy.id)}
-          style={{
-            background: 'var(--color-error)',
-            color: 'white',
-            border: 'none',
-            borderRadius: 4,
-            padding: '6px 12px',
-            fontSize: 13,
-            cursor: 'pointer'
-          }}
-        >
-          Удалить
-        </button>
-      )}
-    </div>
-  );
-}
-
-function CopiesManagement({ 
-  copies, 
-  addingCopy, 
-  onAddCopy, 
-  onDeleteCopy 
-}: { 
-  copies: Copy[]; 
-  addingCopy: boolean; 
-  onAddCopy: () => void; 
-  onDeleteCopy: (id: number) => void;
-}) {
-  return (
-    <div style={{
-      background: 'var(--bg-card)',
-      border: '1px solid var(--border-light)',
-      borderRadius: 12,
-      padding: 24
-    }}>
-      <h3 style={{ 
-        fontSize: 18, 
-        fontWeight: 600,
-        color: 'var(--text-primary)',
-        marginBottom: 16 
-      }}>
-        Управление экземплярами
-      </h3>
-
-      <div style={{ marginBottom: 20 }}>
-        {copies.map(copy => (
-          <CopyItem key={copy.id} copy={copy} onDelete={onDeleteCopy} />
-        ))}
-      </div>
-
-      <button
-        onClick={onAddCopy}
-        disabled={addingCopy}
-        style={{
-          padding: '10px 20px',
-          background: 'var(--color-success)',
-          color: 'white',
-          border: 'none',
-          borderRadius: 8,
-          fontWeight: 600,
-          cursor: addingCopy ? 'not-allowed' : 'pointer',
-          opacity: addingCopy ? 0.7 : 1
-        }}
-      >
-        {addingCopy ? 'Добавление...' : 'Добавить экземпляр'}
-      </button>
-    </div>
-  );
-}
-
-
 
 function ReviewsSection({ bookId }: ReviewsSectionProps) {
   const { user } = useAuth();

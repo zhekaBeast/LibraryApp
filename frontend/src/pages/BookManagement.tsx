@@ -225,7 +225,6 @@ export function BookManagement() {
         <EditBookForm
           formData={formData}
           setFormData={setFormData}
-          editingBook={editingBook}
           copies={copies[editingBook.id] || []}
           loadingCopies={loadingCopies[editingBook.id]}
           addingCopy={addingCopy === editingBook.id}
@@ -596,7 +595,6 @@ function CreateBookForm({
 function EditBookForm({
   formData,
   setFormData,
-  editingBook,
   copies,
   loadingCopies,
   addingCopy,
@@ -608,7 +606,6 @@ function EditBookForm({
 }: {
   formData: any;
   setFormData: any;
-  editingBook: Book;
   copies: Copy[];
   loadingCopies?: boolean;
   addingCopy?: boolean;

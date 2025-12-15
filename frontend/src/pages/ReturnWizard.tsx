@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
-import type { User, Book, Copy, Loan } from '../types';
+import type { User, Loan } from '../types';
 
 type WizardStep = 'select-user' | 'select-loan' | 'confirm';
 

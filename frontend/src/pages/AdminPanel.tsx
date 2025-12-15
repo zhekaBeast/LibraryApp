@@ -23,7 +23,6 @@ export default function AdminPanel() {
   const [editForm, setEditForm] = useState<any>({});
   const [isCreating, setIsCreating] = useState(false);
   const [newItem, setNewItem] = useState<any>({});
-  const [search, setSearch] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -38,7 +37,15 @@ export default function AdminPanel() {
   const loadData = async (page = 1) => {
     setLoading(true);
     try {
-      const response = await api.get(`/api/admin/${activeModel}?page=${page}&limit=${pagination.limit}`);
+      const response = await api.get<{
+        data: any[];
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          pages: number;
+        };
+      }>(`/api/admin/${activeModel}?page=${page}&limit=${pagination.limit}`);
       setData(response.data);
       setPagination(response.pagination);
     } catch (error) {

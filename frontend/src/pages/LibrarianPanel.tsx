@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
-import { useToast } from '../contexts/ToastContext';
 import { IssueWizard } from './IssueWizard';
 import { ReturnWizard } from './ReturnWizard';
 import { BookManagement } from './BookManagement';
@@ -11,7 +10,6 @@ type LibrarianTab = 'issue' | 'return' | 'manage' | 'stats'  | 'users';
 
 export default function LibrarianPanel() {
   const { hasRole } = useAuth();
-  const { addToast } = useToast();
   const [activeTab, setActiveTab] = useState<LibrarianTab>('users');
   
   // Проверяем права

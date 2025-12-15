@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
-import type { User, Book, Copy } from '../types';
+import type { User, Book, Copy, Loan } from '../types';
 
 type WizardStep = 'select-user' | 'select-book' | 'confirm';
 
@@ -58,13 +58,6 @@ export function IssueWizard() {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  // Рассчитать дату возврата
-  const calculateDueDate = () => {
-    const date = new Date();
-    date.setDate(date.getDate() + dueDays);
-    return date.toLocaleDateString('ru-RU');
   };
 
   return (
@@ -392,7 +385,7 @@ function BookSearchStep({
       
       const query = searchQuery.toLowerCase().trim();
       
-      const filtered = allBooks.filter(book => 
+      const filtered = allBooks.filter((book: Book) => 
         book.title?.toLowerCase().includes(query) ||
         book.author?.toLowerCase().includes(query) ||
         (book.isbn && book.isbn.toLowerCase().includes(query))
@@ -540,11 +533,11 @@ function BookSearchStep({
             {/* Список книг */}
             <div style={{ maxHeight: 300, overflowY: 'auto' }}>
               {filteredBooks.length > 0 ? (
-                filteredBooks.map(book => (
+                filteredBooks.map((book, index) => (
                   <BookCard
-                    key={book.id}
+                    key={index}
                     book={book}
-                    isSelected={selectedBook?.id === book.id}
+                    isSelected={selectedBook === book}
                     onSelect={onSelectBook} // Выбираем книгу
                   />
                 ))
@@ -631,7 +624,7 @@ function BookSearchStep({
             
             {bookCopies.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {bookCopies.map(copy => (
+                {bookCopies.map((copy) => (
                   <div
                     key={copy.id}
                     onClick={() => onSelectCopy(copy)} // ВАЖНО: Выбираем копию здесь!

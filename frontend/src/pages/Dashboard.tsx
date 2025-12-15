@@ -60,27 +60,19 @@ function TabNavigation({
 // --- Компонент карточки активного займа ---
 function ActiveLoanCard({ loan }: { loan: Loan }) {
   const dueDate = new Date(loan.dueAt);
-  const now = new Date();
-  const daysLeft = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   const navigate = useNavigate();
   
-  const getStatusColor = () => {
-    if (daysLeft <= 0) return 'var(--color-error)';
-    if (daysLeft <= 3) return 'var(--color-warning)';
-    return 'var(--color-success)';
-  };
+ 
   
-  const getStatusText = () => {
-    if (daysLeft <= 0) return `Просрочено на ${Math.abs(daysLeft)} дней`;
-    if (daysLeft === 1) return 'Вернуть завтра';
-    if (daysLeft <= 3) return `Вернуть через ${daysLeft} дня`;
-    return `Вернуть через ${daysLeft} дней`;
-  };
-  
+  // Если по каким-то причинам связанный экземпляр отсутствует, просто не отображаем карточку
+  if (!loan.copy || !loan.copy.book) {
+    return null;
+  }
+
   return (
     <div
-	onClick={() => navigate(`/book/${loan.copy.book.id}`)} 
-	style={{
+      onClick={() => navigate(`/book/${loan.copy!.book.id}`)} 
+      style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-light)',
       borderRadius: 12,
@@ -266,14 +258,16 @@ function SubscriptionCard({
 function HistoryCard({ loan }: { loan: Loan }) {
   const borrowedDate = new Date(loan.issuedAt);
   const returnedDate = loan.returnedAt ? new Date(loan.returnedAt) : null;
-  const daysHeld = returnedDate 
-    ? Math.ceil((returnedDate.getTime() - borrowedDate.getTime()) / (1000 * 60 * 60 * 24))
-    : 0;
-	const navigate = useNavigate();	
+  const navigate = useNavigate();	
+
+  if (!loan.copy || !loan.copy.book) {
+    return null;
+  }
+
   return (
     <div 
-	onClick={() => navigate(`/book/${loan.copy.book.id}`)}
-	style={{
+      onClick={() => navigate(`/book/${loan.copy!.book.id}`)}
+      style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-light)',
       borderRadius: 12,
@@ -373,7 +367,6 @@ export default function DashboardPage() {
   const [subscriptions, setSubscriptions] = useState<AvailabilitySubscription []>([]);
   const [loanHistory, setLoanHistory] = useState<Loan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [unsubscribing, setUnsubscribing] = useState<number | null>(null);
 
   // Загрузка данных
   useEffect(() => {
@@ -407,7 +400,6 @@ export default function DashboardPage() {
 
   // Отписка от уведомлений
   const handleUnsubscribe = async (subscriptionId: number) => {
-    setUnsubscribing(subscriptionId);
     try {
       const subscription = subscriptions.find(s => s.id === subscriptionId);
       if (subscription) {
@@ -419,7 +411,6 @@ export default function DashboardPage() {
       console.error('Ошибка отписки:', err);
       addToast('Ошибка отписки', 'error');
     } finally {
-      setUnsubscribing(null);
     }
   };
 

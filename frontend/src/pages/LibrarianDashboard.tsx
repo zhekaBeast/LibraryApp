@@ -1,5 +1,5 @@
 // Dashboard.tsx - упрощенная версия
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { api } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
 
@@ -169,10 +169,6 @@ function QuickStatsView({ stats, onRefresh }: { stats: QuickStats; onRefresh: ()
               borderRadius: 12,
               padding: 24,
               transition: 'all 0.2s',
-              ':hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: 'var(--shadow-md)'
-              }
             }}
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -268,8 +264,7 @@ function FullStatsView({ stats, onRefresh }: { stats: DashboardStats; onRefresh:
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: '1fr 1fr', 
-        gap: 24,
-        '@media (max-width: 1024px)': { gridTemplateColumns: '1fr' }
+        gap: 24
       }}>
         <ListSection
           title="📈 Популярные книги"
@@ -323,18 +318,14 @@ function FullStatsView({ stats, onRefresh }: { stats: DashboardStats; onRefresh:
 }
 
 // Компонент карточки метрики
-function MetricCard({ title, value, icon, color }: any) {
+function MetricCard({ title, value, icon, color }: { title: string; value: number; icon: string; color: string }) {
   return (
     <div style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-light)',
       borderRadius: 12,
       padding: 24,
-      transition: 'all 0.2s',
-      ':hover': {
-        transform: 'translateY(-2px)',
-        boxShadow: 'var(--shadow-md)'
-      }
+      transition: 'all 0.2s'
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
@@ -365,7 +356,21 @@ function MetricCard({ title, value, icon, color }: any) {
 }
 
 // Компонент списка
-function ListSection({ title, items, renderItem, valueKey, valueSuffix }: any) {
+type ListSectionItem = { id?: number | string } & Record<string, any>;
+
+function ListSection({
+  title,
+  items,
+  renderItem,
+  valueKey,
+  valueSuffix,
+}: {
+  title: string;
+  items: ListSectionItem[];
+  renderItem: (item: ListSectionItem) => ReactNode;
+  valueKey: string;
+  valueSuffix: string;
+}) {
   return (
     <div style={{
       background: 'var(--bg-card)',
@@ -383,7 +388,7 @@ function ListSection({ title, items, renderItem, valueKey, valueSuffix }: any) {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {items.slice(0, 5).map((item: any, index: number) => (
+          {items.slice(0, 5).map((item, index) => (
             <div
               key={item.id || index}
               style={{
@@ -394,11 +399,7 @@ function ListSection({ title, items, renderItem, valueKey, valueSuffix }: any) {
                 background: 'var(--bg-body)',
                 border: '1px solid var(--border-light)',
                 borderRadius: 8,
-                transition: 'all 0.2s',
-                ':hover': {
-                  borderColor: 'var(--primary)',
-                  background: 'var(--ui-card-hover)'
-                }
+                transition: 'all 0.2s'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
