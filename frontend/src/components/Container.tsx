@@ -4,7 +4,7 @@ interface ContainerProps {
     className?: string;
   }
   
-  export function Container({ children, size = 'sm', className = '' }: ContainerProps) {
+  export function Container({ children, size = 'full', className = '' }: ContainerProps) {
     const maxWidths = {
       sm: '640px',
       md: '768px',
@@ -17,8 +17,7 @@ interface ContainerProps {
         style={{
           width: '100%',
           maxWidth: maxWidths[size],
-          margin: '0 auto',
-          padding: '0 var(--spacing)'
+          margin: '0 auto'
         }}
         className={className}
       >

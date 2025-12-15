@@ -21,7 +21,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [state, setState] = useState<AuthState>(() => {
 		const token = localStorage.getItem('token');
 		const userRaw = localStorage.getItem('user');
-		console.log('AuthContext init:', { token: token?.substring(0, 20) + '...', user: userRaw }); // ← ДОБАВЬ
 		return { token, user: userRaw ? (JSON.parse(userRaw) as User) : null };
 	});
 
@@ -34,7 +33,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const login = useCallback(async (email: string, password: string) => {
 		const res = await api.post<AuthResponse>('/api/auth/login', { email, password });
-		console.log('Login response:', res); // ← ДОБАВЬ
 		setState({ token: res.token, user: res.user });
 	}, []);
 

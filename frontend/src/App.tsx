@@ -8,7 +8,7 @@ import React from 'react';
 import NotificationBell from './pages/NotificationBell';
 
 export default function App() {
-  const { user, logout, hasRole, switchRole } = useAuth();
+  const { user, logout, hasRole} = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -48,14 +48,17 @@ export default function App() {
         borderBottom: '1px solid var(--border-light)',
         position: 'sticky',
         top: 0,
-        zIndex: 50
+        zIndex: 50,
       }}>
         <Container size="full">
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'space-between', 
-            height: '64px' 
+            height: '64px',
+            boxSizing: 'border-box',
+            paddingLeft: '16px',
+            paddingRight: '16px'
           }}>
             {/* Логотип */}
             <Link to={user ? '/' : '/login'} style={{ 
@@ -78,11 +81,6 @@ export default function App() {
                   {user.name}
                 </span>
               )}
-
-              {/* Селектор роли */}
-              {/* {user && user.role == "ADMIN" && 
-                <RoleSelector role={user.role} onChange={switchRole} />
-              } */}
               {user && <NotificationBell />}
               {/* Мобильное меню (всегда) */}
               <MobileMenu 
@@ -108,28 +106,6 @@ export default function App() {
   );
 }
 
-// Компонент выбора роли
-function RoleSelector({ role, onChange }: { role: Role; onChange: (role: Role) => void }) {
-  return (
-    <select
-      value={role}
-      onChange={(e) => onChange(e.target.value as Role)}
-      style={{
-        padding: '6px 10px',
-        border: '1px solid var(--border-medium)',
-        borderRadius: 'var(--border-radius)',
-        fontSize: '12px',
-        background: 'var(--bg-card)',
-        color: 'var(--text-primary)',
-        cursor: 'pointer'
-      }}
-    >
-      <option value="READER">Читатель</option>
-      <option value="LIBRARIAN">Библиотекарь</option>
-      <option value="ADMIN">Админ</option>
-    </select>
-  );
-}
 
 // Компонент мобильного меню
 const MobileMenu = React.forwardRef<HTMLDivElement, {
@@ -157,7 +133,7 @@ const MobileMenu = React.forwardRef<HTMLDivElement, {
       ];
 
   return (
-    <div ref={ref} style={{ position: 'relative', paddingRight: '40px' }}>
+    <div ref={ref} style={{ position: 'relative'}}>
       {/* Гамбургер кнопка */}
       <button
         onClick={onToggle}
