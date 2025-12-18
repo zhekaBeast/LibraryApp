@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'https://библиотека1337.рф';
 
 export interface ApiClientOptions {
 	getToken?: () => string | null;
